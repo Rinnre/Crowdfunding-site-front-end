@@ -36,7 +36,35 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
-
+  {
+    path: '/auth',
+    component: Layout,
+    redirect: '/auth/user/list',
+    name: '权限管理',
+    meta: { title: '权限管理', icon: 'chart' },
+    children: [
+      {
+        path: 'user/list',
+        name: '管理员管理',
+        component: () => import('@/views/auth/user/list'),
+        meta: { title: '管理员管理' }
+      },
+      {
+        path: 'role/list',
+        name: '角色管理',
+        component: () => import('@/views/auth/role/list'),
+        meta: { title: '角色管理' }
+      },
+      
+      {
+        path: 'menu/list',
+        name: '菜单管理',
+        component: () => import('@/views/auth/menu/list'),
+        meta: { title: '菜单管理' }
+      },
+    
+    ]
+  },
   {
     path: '/example',
     component: Layout,

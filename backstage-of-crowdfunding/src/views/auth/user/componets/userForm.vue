@@ -3,45 +3,65 @@
     <!--添加表单-->
 
     <el-form
-      :model="adminInfo"
+      :model="addAdminInfo"
       :rules="rules"
-      ref="adminInfo"
+      ref="addAdminInfo"
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="登录账号" prop="loginAcct">
-        <el-input v-model="adminInfo.loginAcct"></el-input>
+      <el-form-item label="登录账号" prop="loginAcct" >
+        <el-input v-model="addAdminInfo.loginAcct" :disabled="disabled"></el-input>
       </el-form-item>
 
       <el-form-item label="用户昵称" prop="nickName">
-        <el-input v-model="adminInfo.nickName"></el-input>
+        <el-input v-model="addAdminInfo.nickName"></el-input>
       </el-form-item>
 
-      <el-form-item label="登录密码" prop="password">
+      <el-form-item
+        label="登录密码"
+        prop="password"
+        v-if="null == addAdminInfo.id"
+      >
         <el-input
           type="password"
-          v-model="adminInfo.password"
+          v-model="addAdminInfo.password"
           auto-complete="off"
         ></el-input>
       </el-form-item>
 
-      <el-form-item label="确认密码" prop="checkPassword">
+      <el-form-item
+        label="确认密码"
+        prop="checkPassword"
+        v-if="null == addAdminInfo.id"
+      >
         <el-input
           type="password"
-          v-model="adminInfo.checkPassword"
+          v-model="addAdminInfo.checkPassword"
           auto-complete="off"
         ></el-input>
       </el-form-item>
 
       <el-form-item label="电子邮箱" prop="email">
-        <el-input v-model="adminInfo.email"></el-input>
+        <el-input v-model="addAdminInfo.email"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('adminInfo')"
+        <el-button
+          type="primary"
+          @click="submitForm('addAdminInfo')"
+          v-if="null == addAdminInfo.id"
           >创建</el-button
         >
-        <el-button type="danger" @click="resetForm('adminInfo')"
+        <el-button
+          type="danger"
+          @click="resetForm('addAdminInfo')"
+          v-if="null == addAdminInfo.id"
           >重置</el-button
+        >
+        <el-button
+          type="primary"
+          @click="saveForm('addAdminInfo')"
+          v-if="null != addAdminInfo.id"
+          >保存</el-button
         >
       </el-form-item>
     </el-form>
@@ -49,29 +69,42 @@
 </template>
 
 <script>
+import admin from "@/api/admin";
 export default {
   name: "userForm",
-  props: ['adminInfo'],
+  props: {
+    adminInfo: {
+      type: Object,
+      default:{}
+    },
+  },
   data() {
     // 自定义密码校验规则
     var validatePass = (rule, value, callback) => {
+      if (this.adminInfo.id != null) {
+        callback();
+        return;
+      }
       if (value === "" || null == value) {
         callback(new Error("请输入密码"));
       } else {
         if (
-          this.adminInfo.checkPassword !== "" ||
-          null == this.adminInfo.checkPassword
+          this.addAdminInfo.checkPassword !== "" ||
+          null == this.addAdminInfo.checkPassword
         ) {
-          this.$refs.adminInfo.validateField("checkPassword");
+          this.$refs.addAdminInfo.validateField("checkPassword");
         }
         callback();
       }
     };
     var validatePass2 = (rule, value, callback) => {
-      
+      if (this.adminInfo.id === 0) {
+        callback();
+        return;
+      }
       if (value === "" || null == value) {
         callback(new Error("请再次输入密码"));
-      } else if (value !== this.adminInfo.password) {
+      } else if (value !== this.addAdminInfo.password) {
         callback(new Error("两次输入密码不一致!"));
       } else {
         callback();
@@ -92,6 +125,9 @@ export default {
       }
     };
     return {
+      operation: 1, //表示新增还是修改的字段（1表示新增，0表示修改）,
+      addAdminInfo: this.adminInfo,
+      disabled:false,
       rules: {
         loginAcct: [
           { required: true, message: "请输入登录账号", trigger: "blur" },
@@ -128,24 +164,36 @@ export default {
       },
     };
   },
+  watch: {
+    adminInfo:{
+      handler(val){
+        // console.log(val);
+        this.disabled = true;
+        this.addAdminInfo = val;
+      },
+      deep: true
+    }
+  },
   methods: {
     // 添加账号
     submitForm(formName) {
+      // console.log(formName);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //  console.log(this.adminInfo)
           admin
-            .addAdmin(this.adminInfo)
+            .addAdmin(this.addAdminInfo)
             .then((res) => {
               // 弹框提示添加成功
               this.$message.success(res.message);
 
               // 关闭添加弹出层
-              this.addFormVisible = false;
               // 重新加载数据
-              this.loadAdminList(this.currentPage);
+              // debugger;
+              this.$emit("refreshAndClose");
             })
             .catch((err) => {
+              console.log(err);
               // 弹出错误信息
               this.$message.error(err.message);
             });
@@ -157,6 +205,32 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    saveForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          //  console.log(this.adminInfo)
+          admin
+            .modifyAdmin(this.adminInfo.id,this.addAdminInfo)
+            .then((res) => {
+              // 弹框提示添加成功
+              this.$message.success(res.message);
+
+              // 关闭添加弹出层
+              // 重新加载数据
+              // debugger;
+              this.$emit("refreshAndClose");
+            })
+            .catch((err) => {
+              console.log(err);
+              // 弹出错误信息
+              this.$message.error(err.message);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
   },
 };

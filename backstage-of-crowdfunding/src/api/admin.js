@@ -25,7 +25,7 @@ export default {
         return request({
             url: `${api_path}/remove/admin/list`,
             method: 'DELETE',
-            params: idList
+            data: idList
         })
     },
 

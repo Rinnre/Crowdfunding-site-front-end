@@ -10,7 +10,7 @@
       >
       <el-button type="default" @click="resetData()">清空</el-button>
 
-      <el-button type="danger" style="float: right">批量删除</el-button>
+      <el-button type="danger" @click="dialogFormAdd()" style="float: right">批量删除</el-button>
       <el-button
         type="success"
         @click="addFormVisible = true"
@@ -24,50 +24,27 @@
       title="新增账号"
       width="598px"
       :visible.sync="addFormVisible"
+      @closed="refreshAndClose"
       center
     >
-    <userForm adminInfo = adminInfo></userForm>
-      <!-- <el-form
-        :model="adminInfo"
-        :rules="rules"
-        ref="adminInfo"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="登录账号" prop="loginAcct">
-          <el-input v-model="adminInfo.loginAcct"></el-input>
-        </el-form-item>
+      <userForm
+        :adminInfo="adminInfo"
+        @refreshAndClose="refreshAndClose"
+      ></userForm>
+    </el-dialog>
 
-        <el-form-item label="用户昵称" prop="nickName">
-          <el-input v-model="adminInfo.nickName"></el-input>
-        </el-form-item>
-
-        <el-form-item label="登录密码" prop="password">
-          <el-input
-            type="password"
-            v-model="adminInfo.password"
-            auto-complete="off"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="确认密码" prop="checkPassword">
-          <el-input
-            type="password"
-            v-model="adminInfo.checkPassword"
-            auto-complete="off"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model="adminInfo.email"></el-input>
-        </el-form-item>
-        <el-form-item >
-            <el-button type="primary" @click="submitForm('adminInfo')"
-              >创建</el-button
-            >
-            <el-button type="danger" @click="resetForm('adminInfo')">重置</el-button>
-        </el-form-item>
-      </el-form> -->
+     <!--修改表单-->
+    <el-dialog
+      title="账号详情"
+      width="598px"
+      :visible.sync="editFormVisible"
+      @closed="refreshAndClose"
+      center
+    >
+      <userForm
+        :adminInfo="adminInfo"
+        @refreshAndClose="refreshAndClose"
+      ></userForm>
     </el-dialog>
 
     <!-- banner列表 -->
@@ -77,6 +54,7 @@
       border
       fit
       highlight-current-row
+       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column label="序号" width="60" align="center">
@@ -91,7 +69,12 @@
 
       <el-table-column label="操作" width="230" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" icon="el-icon-edit"></el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
+            @click="edit_admin(scope.row.id)"
+          ></el-button>
           <el-button type="info" size="mini" icon="el-icon-plus"></el-button>
           <el-button
             type="danger"
@@ -119,51 +102,13 @@
 
 <script>
 import admin from "@/api/admin";
-import userForm from "@/views/auth/user/componets/userForm"
+import userForm from "@/views/auth/user/componets/userForm";
 export default {
   name: "adminList",
   components: {
-     'userForm':userForm
+    userForm: userForm,
   },
   data() {
-    // 自定义密码校验规则
-    var validatePass = (rule, value, callback) => {
-      if (value === "" || null == value) {
-        callback(new Error("请输入密码"));
-      } else {
-        if (
-          this.adminInfo.checkPassword !== "" ||
-          null == this.adminInfo.checkPassword
-        ) {
-          this.$refs.adminInfo.validateField("checkPassword");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "" || null == value) {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.adminInfo.password) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
-
-    // 自定义邮箱验证规则
-    var validateEmail = (rule, value, callback) => {
-      var reg =
-        /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
-      //  console.log(reg.test(value))
-      if (value === "" || null == value) {
-        callback(new Error("请输入邮箱"));
-      } else if (!reg.test(value)) {
-        callback(new Error("请输入正确格式的邮箱,例如xxxxx@xx.com"));
-      } else {
-        callback();
-      }
-    };
-
     return {
       listLoading: true, // 数据是否正在加载
       adminList: null, // 账号列表
@@ -173,58 +118,34 @@ export default {
       limit: 10, // 每页记录数
       keywords: "", // 查询表单对象
       addFormVisible: false, // 添加表单是否显示
+      editFormVisible:false,// 修改表单是否显示
+      multipleTable:[],// 选中的数据
       adminInfo: {},
-      rules: {
-        loginAcct: [
-          { required: true, message: "请输入登录账号", trigger: "blur" },
-          {
-            min: 3,
-            max: 11,
-            message: "长度在 3 到 11 个字符",
-            trigger: "blur",
-          },
-        ],
-        nickName: [
-          { required: false, message: "请输入用户昵称", trigger: "blur" },
-          { min: 0, max: 11, message: "长度在 11个字符以内", trigger: "blur" },
-        ],
-        password: [
-          { validator: validatePass, required: true, trigger: "blur" },
-          {
-            min: 6,
-            max: 11,
-            message: "长度在 6 到 11 个字符",
-            trigger: "blur",
-          },
-        ],
-        checkPassword: [
-          { validator: validatePass2, required: true, trigger: "blur" },
-          {
-            min: 6,
-            max: 11,
-            message: "长度在 3 到 11 个字符",
-            trigger: "blur",
-          },
-        ],
-        email: [{ validator: validateEmail, required: true, trigger: "blur" }],
-      },
     };
   },
   created() {
     this.loadAdminList();
   },
   methods: {
-     refreshAndClose() {
-        this.addFormVisible=false;
-        this.loadAdminList(this.currentPage);
-     },
+    refreshAndClose() {
+      // 清空弹出层数据
+      this.adminInfo = {};
+      //  console.log("!!!")
+      // 关闭弹出层
+      this.addFormVisible = false;
+      this.editFormVisible = false;
+
+      // 刷新页面
+      this.loadAdminList(this.currentPage);
+    },
     loadAdminList(page = 1) {
       this.page = page;
+      // console.log(this.page, this.limit);
       admin
         .getAdminPageList(this.page, this.limit, this.keywords)
         .then((res) => {
           this.adminList = res.data.records;
-          // console.log(this.adminList);
+          //  console.log(this.adminList);
           this.total = res.data.total;
           this.currentPage = res.data.current;
           this.listLoading = false;
@@ -233,6 +154,7 @@ export default {
           console.log(err);
         });
     },
+
 
     // 当页码发生改变的时候
     changeSize(size) {
@@ -275,49 +197,42 @@ export default {
           });
         });
     },
-
-    // 添加账号
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          //  console.log(this.adminInfo)
-          admin
-            .addAdmin(this.adminInfo)
-            .then((res) => {
-              // 弹框提示添加成功
-              this.$message.success(res.message);
-
-              // 关闭添加弹出层
-              this.addFormVisible = false;
-              // 重新加载数据
-              this.loadAdminList(this.currentPage);
-            })
-            .catch((err) => {
-              // 弹出错误信息
-              this.$message.error(err.message);
-            });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    handleSelectionChange(val) {
+      this.multipleTable = val;               //  this.multipleTable 选中的值
+      // console.log(val);
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    dialogFormAdd() {
+      var idList = [];
+      for (var i = 0; i < this.multipleTable.length; i++) {
+        var info = this.multipleTable[i];
+        // console.log(halo);
+        idList.push(info.id);
+      }
+      // console.log(idList);
+      admin.removeAdminByIdList(idList)
+        .then((res) =>{
+            // 提示成功
+            this.$message.success(res.message);
+            // 刷新页面
+            this.loadAdminList(this.currentPage);
+        }).catch((err) =>{
+          this.$message.error(err.message);
+        })
     },
-  },
+    edit_admin(id) {
+      // 查询账号信息
+      admin.getAdminById(id)
+         .then((res) =>{
+            this.adminInfo = res.data;
+            // console.log(this.adminInfo);
+         }).catch((err) =>{
+            this.$message.error(err.message);
+         })
+      // 开启弹出层
+      this.editFormVisible = true;
 
-  toggleSelection(rows) {
-    if (rows) {
-      rows.forEach((row) => {
-        this.$refs.multipleTable.toggleRowSelection(row);
-      });
-    } else {
-      this.$refs.multipleTable.clearSelection();
-    }
-  },
-  handleSelectionChange(val) {
-    this.multipleSelection = val;
+    },
+    
   },
 };
 </script>

@@ -49,9 +49,9 @@ export default {
     // 修改管理员账号信息
     modifyAdmin(id, admin) {
         return request({
-            url: `${api_path}/modify/admin/{id}`,
+            url: `${api_path}/modify/admin/${id}`,
             method: `PUT`,
-            params: admin
+            params: {admin}
         })
     },
 

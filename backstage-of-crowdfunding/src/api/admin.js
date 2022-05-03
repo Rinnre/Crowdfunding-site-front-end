@@ -51,7 +51,7 @@ export default {
         return request({
             url: `${api_path}/modify/admin/${id}`,
             method: `PUT`,
-            params: {admin}
+            data: admin
         })
     },
 
@@ -60,15 +60,23 @@ export default {
         return request({
             url: `${api_path}/assign/roles/${admin_id}`,
             method: 'POST',
-            params: roles_id
+            data: roles_id
         })
     },
     // 给管理员取消分配角色
-    unAssigenRole(admin_id, roles_id) {
+    unAssignRole(admin_id, roles_id) {
         return request({
-            url: `${api_path}/assign/roles/${admin_id}`,
+            url: `${api_path}/unAssign/roles/${admin_id}`,
             method: 'DELETE',
-            params: roles_id
+            data: roles_id
+        })
+    },
+
+    // 获取已经分配的角色
+    getAssignedRoles(admin_id){
+        return request({
+            url: `${api_path}/get/assigned/roles/${admin_id}`,
+            method: 'GET'
         })
     }
 

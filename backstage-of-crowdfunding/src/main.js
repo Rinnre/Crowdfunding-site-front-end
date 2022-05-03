@@ -15,6 +15,8 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import 'default-passive-events'
+
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false

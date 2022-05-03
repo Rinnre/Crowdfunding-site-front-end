@@ -10,7 +10,9 @@
       >
       <el-button type="default" @click="resetData()">清空</el-button>
 
-      <el-button type="danger" @click="dialogFormAdd()" style="float: right">批量删除</el-button>
+      <el-button type="danger" @click="removeAdminBatch()" style="float: right"
+        >批量删除</el-button
+      >
       <el-button
         type="success"
         @click="addFormVisible = true"
@@ -33,7 +35,7 @@
       ></userForm>
     </el-dialog>
 
-     <!--修改表单-->
+    <!--修改表单-->
     <el-dialog
       title="账号详情"
       width="598px"
@@ -47,6 +49,20 @@
       ></userForm>
     </el-dialog>
 
+    <!--分配角色-->
+    <el-dialog
+      title="分配角色"
+      width="690px"
+      :visible.sync="assignRoleVisible"
+      @closed="refreshAndClose"
+      center
+    >
+      <assignRole
+        :adminId="adminId"
+        @refreshAndClose="refreshAndClose"
+      ></assignRole>
+    </el-dialog>
+
     <!-- banner列表 -->
     <el-table
       v-loading="listLoading"
@@ -54,7 +70,7 @@
       border
       fit
       highlight-current-row
-       @selection-change="handleSelectionChange"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column label="序号" width="60" align="center">
@@ -73,9 +89,14 @@
             type="primary"
             size="mini"
             icon="el-icon-edit"
-            @click="edit_admin(scope.row.id)"
+            @click="editAdmin(scope.row.id)"
           ></el-button>
-          <el-button type="info" size="mini" icon="el-icon-plus"></el-button>
+          <el-button
+            type="info"
+            size="mini"
+            icon="el-icon-sort"
+            @click="assginRole(scope.row.id)"
+          ></el-button>
           <el-button
             type="danger"
             size="mini"
@@ -103,10 +124,12 @@
 <script>
 import admin from "@/api/admin";
 import userForm from "@/views/auth/user/componets/userForm";
+import assignRole from "@/views/auth/user/componets/assignRole";
 export default {
   name: "adminList",
   components: {
     userForm: userForm,
+    assignRole: assignRole,
   },
   data() {
     return {
@@ -118,9 +141,11 @@ export default {
       limit: 10, // 每页记录数
       keywords: "", // 查询表单对象
       addFormVisible: false, // 添加表单是否显示
-      editFormVisible:false,// 修改表单是否显示
-      multipleTable:[],// 选中的数据
-      adminInfo: {},
+      editFormVisible: false, // 修改表单是否显示
+      assignRoleVisible: false, // 角色分配表单是否显示
+      multipleTable: [], // 选中的数据
+      adminInfo: {}, // 用于账号的添加和修改
+      adminId: "", //当前行账号的Id
     };
   },
   created() {
@@ -128,12 +153,11 @@ export default {
   },
   methods: {
     refreshAndClose() {
-      // 清空弹出层数据
-      this.adminInfo = {};
       //  console.log("!!!")
       // 关闭弹出层
       this.addFormVisible = false;
       this.editFormVisible = false;
+      this.assignRoleVisible = false;
 
       // 刷新页面
       this.loadAdminList(this.currentPage);
@@ -154,7 +178,6 @@ export default {
           console.log(err);
         });
     },
-
 
     // 当页码发生改变的时候
     changeSize(size) {
@@ -198,41 +221,75 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      this.multipleTable = val;               //  this.multipleTable 选中的值
+      this.multipleTable = val; //  this.multipleTable 选中的值
       // console.log(val);
     },
-    dialogFormAdd() {
+    // 获取选中所有行
+    removeAdminBatch() {
       var idList = [];
       for (var i = 0; i < this.multipleTable.length; i++) {
         var info = this.multipleTable[i];
         // console.log(halo);
         idList.push(info.id);
       }
+      if (idList.length == 0 || idList == null) {
+        this.$message.error("未选中任何账号！");
+        return;
+      }
       // console.log(idList);
-      admin.removeAdminByIdList(idList)
-        .then((res) =>{
-            // 提示成功
-            this.$message.success(res.message);
-            // 刷新页面
-            this.loadAdminList(this.currentPage);
-        }).catch((err) =>{
-          this.$message.error(err.message);
+      //确认删除
+      this.$confirm("此操作将删除所有选中账号\n是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          admin
+            .removeAdminByIdList(idList)
+            .then((res) => {
+              // 提示成功
+              this.$message.success(res.message);
+              // 刷新页面
+              this.loadAdminList(this.currentPage);
+            })
+            .catch((err) => {
+              this.$message.error(err.message);
+            });
         })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
-    edit_admin(id) {
-      // 查询账号信息
-      admin.getAdminById(id)
-         .then((res) =>{
-            this.adminInfo = res.data;
-            // console.log(this.adminInfo);
-         }).catch((err) =>{
-            this.$message.error(err.message);
-         })
-      // 开启弹出层
-      this.editFormVisible = true;
-
+    // 开启添加弹框
+    addAdmin() {
+      this.adminInfo = {};
+      this.addFormVisible = true;
     },
+    // 开启分配角色弹框
+    assginRole(id) {
+      // 获取该账号已经分配的角色
+          this.adminId = id;
+          this.assignRoleVisible = true;
     
+    },
+    editAdmin(id) {
+      // 查询账号信息
+      admin
+        .getAdminById(id)
+        .then((res) => {
+          this.adminInfo = res.data;
+          // console.log(this.adminInfo);
+          // 开启弹出层
+          this.editFormVisible = true;
+        })
+        .catch((err) => {
+          this.$message.error(err.message);
+        });
+    },
   },
 };
 </script>

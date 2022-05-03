@@ -3,37 +3,52 @@
     <!--添加表单-->
 
     <el-form
-      :model="roleInfoDetail"
+      :model="menuInfoDetail"
       :rules="rules"
-      ref="roleInfoDetail"
+      ref="menuInfoDetail"
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="角色名称" prop="name">
-        <el-input v-model="roleInfoDetail.name"></el-input>
+      <el-form-item label="菜单名称" prop="name">
+        <el-input v-model="menuInfoDetail.name"></el-input>
       </el-form-item>
 
-      <el-form-item label="角色描述" prop="description">
-        <el-input v-model="roleInfoDetail.description"></el-input>
+      <el-form-item label="类型" prop="type">
+        <div>
+          <el-radio v-model="menuInfoDetail.type" label="0" border>菜单</el-radio>
+          <el-radio v-model="menuInfoDetail.type" label="1" border>页面</el-radio>
+        </div>
+      </el-form-item>
+
+      <el-form-item label="访问路径" prop="path">
+        <el-input v-model="menuInfoDetail.path"></el-input>
+      </el-form-item>
+
+      <el-form-item label="组件路径" prop="component">
+        <el-input v-model="menuInfoDetail.component"></el-input>
+      </el-form-item>
+
+      <el-form-item label="图标" prop="icon">
+        <el-input v-model="menuInfoDetail.icon"></el-input>
       </el-form-item>
 
       <el-form-item>
         <el-button
           type="primary"
-          @click="submitForm('roleInfoDetail')"
-          v-if="null == roleInfoDetail.id"
+          @click="submitForm('menuInfoDetail')"
+          v-if="null == menuInfoDetail.id"
           >创建</el-button
         >
         <el-button
           type="danger"
-          @click="resetForm('roleInfoDetail')"
-          v-if="null == roleInfoDetail.id"
+          @click="resetForm('menuInfoDetail')"
+          v-if="null == menuInfoDetail.id"
           >重置</el-button
         >
         <el-button
           type="primary"
-          @click="saveForm('roleInfoDetail')"
-          v-if="null != roleInfoDetail.id"
+          @click="saveForm('menuInfoDetail')"
+          v-if="null != menuInfoDetail.id"
           >保存</el-button
         >
       </el-form-item>
@@ -42,22 +57,20 @@
 </template>
 
 <script>
-import role from "@/api/role";
+import menu from "@/api/menu";
 export default {
-  name: "roleForm",
+  name: "menuForm",
   props: {
-    roleInfo: {
+    menuInfo: {
       type: Object,
-      default: {},
     },
   },
   data() {
     return {
-      roleInfoDetail: this.roleInfo,
-      disabled: false,
+      menuInfoDetail: this.menuInfo,
       rules: {
         name: [
-          { required: true, message: "请输入角色名称", trigger: "blur" },
+          { required: true, message: "请输入菜单名称", trigger: "blur" },
           {
             min: 3,
             max: 7,
@@ -69,11 +82,10 @@ export default {
     };
   },
   watch: {
-    roleInfo: {
+    menuInfo: {
       handler(val) {
-        // console.log(val);
-        this.disabled = true;
-        this.roleInfoDetail = val;
+        this.menuInfoDetail = val;
+        // console.log(this.menuInfoDetail)
       },
       deep: true,
     },
@@ -84,9 +96,9 @@ export default {
       // console.log(formName);
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          //  console.log(this.roleInfoDetail)
-          role
-            .addRole(this.roleInfoDetail)
+          //  console.log(this.menuInfoDetail)
+          menu
+            .addMenu(this.menuInfoDetail)
             .then((res) => {
               this.$message.success(res.message);
               this.$emit("refreshAndClose");
@@ -109,8 +121,8 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //  console.log(this.adminInfo)
-          role
-            .modifyRoleById(this.roleInfoDetail.id, this.roleInfoDetail)
+          menu
+            .modifyMenu(this.menuInfoDetail)
             .then((res) => {
               // 弹框提示添加成功
               this.$message.success(res.message);

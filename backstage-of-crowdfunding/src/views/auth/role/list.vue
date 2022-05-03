@@ -10,11 +10,10 @@
       >
       <el-button type="default" @click="resetData()">清空</el-button>
 
-      <el-button type="danger" @click="dialogFormAdd()" style="float: right">批量删除</el-button>
-      <el-button
-        type="success"
-        @click="addFormVisible = true"
-        style="float: right"
+      <el-button type="danger" @click="removeRoleBatch()" style="float: right"
+        >批量删除</el-button
+      >
+      <el-button type="success" @click="add_role()" style="float: right"
         >新增角色</el-button
       >
     </el-form>
@@ -33,7 +32,7 @@
       ></roleForm>
     </el-dialog>
 
-     <!--修改表单-->
+    <!--修改表单-->
     <el-dialog
       title="角色详情"
       width="598px"
@@ -47,6 +46,20 @@
       ></roleForm>
     </el-dialog>
 
+    <el-dialog
+      title="角色权限"
+      width="690px"
+      height="640px"
+      :visible.sync="permissionVisible"
+      @closed="refreshAndClose"
+      center
+    >
+      <assignPermissions
+        :roleId="roleInfo.id"
+        @refreshAndClose="refreshAndClose"
+      ></assignPermissions>
+    </el-dialog>
+
     <!-- banner列表 -->
     <el-table
       v-loading="listLoading"
@@ -54,7 +67,7 @@
       border
       fit
       highlight-current-row
-       @selection-change="handleSelectionChange"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column label="序号" width="60" align="center">
@@ -72,14 +85,19 @@
             type="primary"
             size="mini"
             icon="el-icon-edit"
-            @click="edit_role(scope.row.id)"
+            @click="editRole(scope.row.id)"
           ></el-button>
-          <el-button type="info" size="mini" icon="el-icon-plus"></el-button>
+          <el-button
+            type="info"
+            size="mini"
+            icon="el-icon-sort"
+            @click="assginPermissions(scope.row)"
+          ></el-button>
           <el-button
             type="danger"
             size="mini"
             icon="el-icon-delete"
-            @click="confrim_delete(scope.row.id, scope.row.name)"
+            @click="confrimDelete(scope.row.id, scope.row.name)"
           ></el-button>
         </template>
       </el-table-column>
@@ -100,12 +118,15 @@
 </template>
 
 <script>
-import role from '@/api/role'
-import roleForm from '@/views/auth/role/componets/roleForm'
+import role from "@/api/role";
+import roleForm from "@/views/auth/role/componets/roleForm";
+import assignPermissions from "@/views/auth/role/componets/assignPermissions";
+
 export default {
   name: "roleList",
   components: {
-      roleForm: roleForm,
+    roleForm: roleForm,
+    assignPermissions: assignPermissions,
   },
   data() {
     return {
@@ -117,8 +138,9 @@ export default {
       limit: 10, // 每页记录数
       keywords: "", // 查询表单对象
       addFormVisible: false, // 添加表单是否显示
-      editFormVisible:false,// 修改表单是否显示
-      multipleTable:[],// 选中的数据
+      editFormVisible: false, // 修改表单是否显示
+      permissionVisible: false, // 分配权限给角色
+      multipleTable: [], // 选中的数据
       roleInfo: {},
     };
   },
@@ -126,7 +148,7 @@ export default {
     this.loadRoleList();
   },
   methods: {
-
+    // 加载所有数据
     loadRoleList(page = 1) {
       this.page = page;
       // console.log(this.page, this.limit);
@@ -144,18 +166,16 @@ export default {
         });
     },
 
+    // 供子组件关闭弹出层使用
     refreshAndClose() {
-      // 清空弹出层数据
-      this.roleInfo = {};
       //  console.log("!!!")
       // 关闭弹出层
       this.addFormVisible = false;
       this.editFormVisible = false;
-
+      this.permissionVisible = false;
       // 刷新页面
       this.loadRoleList(this.currentPage);
     },
-
 
     // 当页码发生改变的时候
     changeSize(size) {
@@ -170,7 +190,7 @@ export default {
       this.loadRoleList();
     },
     // 确认删除
-    confrim_delete(id, name) {
+    confrimDelete(id, name) {
       this.$confirm("此操作将删除角色:" + name + ", 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -198,42 +218,74 @@ export default {
           });
         });
     },
+    // 获取选中数据
     handleSelectionChange(val) {
-      this.multipleTable = val;               //  this.multipleTable 选中的值
+      this.multipleTable = val; //  this.multipleTable 选中的值
       // console.log(val);
     },
-    dialogFormAdd() {
+
+    // 批量删除角色
+    removeRoleBatch() {
       var idList = [];
       for (var i = 0; i < this.multipleTable.length; i++) {
         var info = this.multipleTable[i];
         // console.log(halo);
         idList.push(info.id);
       }
-      // console.log(idList);
-      role.removeRoleByIdList(idList)
-        .then((res) =>{
-            // 提示成功
-            this.$message.success(res.message);
-            // 刷新页面
-            this.loadRoleList(this.currentPage);
-        }).catch((err) =>{
-          this.$message.error(err.message);
+      if (idList.length == 0 || idList == null) {
+        this.$message.error("未选中任何角色！");
+        return;
+      }
+      this.$confirm("此操作将删除角色:" + name + ", 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          // console.log(idList);
+          role
+            .removeRoleByIdList(idList)
+            .then((res) => {
+              // 提示成功
+              this.$message.success(res.message);
+              // 刷新页面
+              this.loadRoleList(this.currentPage);
+            })
+            .catch((err) => {
+              this.$message.error(err.message);
+            });
         })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
-    edit_role(id) {
+    add_role() {
+      this.roleInfo = {};
+      this.addFormVisible = true;
+    },
+    assginPermissions(role) {
+      this.roleInfo = {};
+      this.roleInfo = role;
+      this.permissionVisible = true;
+    },
+    editRole(id) {
       // 查询账号信息
-      role.getRoleById(id)
-         .then((res) =>{
-            this.roleInfo = res.data;
-            // console.log(this.adminInfo);
-         }).catch((err) =>{
-            this.$message.error(err.message);
-         })
+      role
+        .getRoleById(id)
+        .then((res) => {
+          this.roleInfo = res.data;
+          // console.log(this.adminInfo);
+        })
+        .catch((err) => {
+          this.$message.error(err.message);
+        });
       // 开启弹出层
       this.editFormVisible = true;
-
     },
-    
   },
 };
 </script>

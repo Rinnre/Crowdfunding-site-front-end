@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <navigation></navigation>
     <div class="login_field">
       <h3 v-if="mode == 'code'">
         验证码登录
@@ -40,8 +39,8 @@
           登录
         </div>
         <p v-if="mode == 'code'" class="agreement">
-          点击"登录"即表明您已阅读并同意
-          <a href="#" target="_blank">《用户协议》</a>
+          <!-- 点击"登录"即表明您已阅读并同意
+          <a href="#" target="_blank">《用户协议》</a> -->
         </p>
       </div>
       <div v-if="mode != 'wx'" class="login_bottom">
@@ -57,13 +56,9 @@
 
 <script>
 import userApi from "@/api/user";
-import navigation from '@/components/header/navigation';
 
 export default {
   name: "Login",
-  components: {
-    navigation: navigation
-  },
   data() {
     return {
       mode: "code",
@@ -134,11 +129,11 @@ export default {
 
 
 .home .login_field {
-  margin: 30px auto 124px;
+  // margin-top: -70px,0px;
   width: 539px;
-  -webkit-box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12),
-    0 1px 6px 0 rgba(0, 0, 0, 0.12);
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12), 0 1px 6px 0 rgba(0, 0, 0, 0.12);
+  // -webkit-box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12),
+  //   0 1px 6px 0 rgba(0, 0, 0, 0.12);
+  // box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12), 0 1px 6px 0 rgba(0, 0, 0, 0.12);
   border-radius: 6px;
   background: #fff;
   display: table;
@@ -166,7 +161,7 @@ export default {
 }
 
 .home .login_field .op_field {
-  padding: 40px 100px 0 100px;
+  padding: 40px 80px 0 80px;
 }
 
 .home .login_field .op_field .top_input {
@@ -278,7 +273,7 @@ export default {
 }
 
 .home .login_field .op_field .bottom_input.other_input {
-  padding: 20px 0 0 0;
+  padding: 40px 0 0 0;
 }
 
 .home .login_field .op_field .bottom_input.other_input .password {

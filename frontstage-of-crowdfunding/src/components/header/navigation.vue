@@ -48,7 +48,7 @@
       </div>
     </section>
     <!--添加表单-->
-    <el-dialog width="570px" :show-close="false" center :visible.sync="loginFormVisible"
+    <el-dialog width="570px" top="5vh" :show-close="false" center :visible.sync="loginFormVisible"
       @closed="refreshAndClose">
       <login @refreshAndClose="refreshAndClose"></login>
     </el-dialog>

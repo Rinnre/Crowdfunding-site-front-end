@@ -15,5 +15,11 @@ export default {
             method:'POST',
             data: user
         })
+    },
+    send_code(phone,type){
+        return request({
+            url: `${api_path}/send/code/${phone}/${type}`,
+            method:'GET'
+        })
     }
 }

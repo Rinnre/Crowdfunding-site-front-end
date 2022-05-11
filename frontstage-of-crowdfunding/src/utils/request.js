@@ -5,10 +5,11 @@ import axios from "axios";
 import jsonBig from "json-bigint";
 import store from "@/store";
 import router from "@/router";
+import { Message } from 'element-ui'
 
 // axios.create 方法：复制一个 axios
 const request = axios.create({
-    baseURL: "http://ttapi.research.itcast.cn/", // 基础路径
+    baseURL: "http://localhost:9533", // 基础路径
     timeout: 5000 // 请求超时时间
 });
 
@@ -49,6 +50,7 @@ request.interceptors.response.use(
          */
         const res = response.data
         if (res.code !== 200) {
+            
             Message({
                 message: res.message,
                 type: 'error',
@@ -71,9 +73,10 @@ request.interceptors.response.use(
                     })
                 })
             }
-            return Promise.reject('error')
+            // return Promise.reject('error')
+            return response.data;
         } else {
-            return response.data
+            return response.data;
         }
     },
     error => {

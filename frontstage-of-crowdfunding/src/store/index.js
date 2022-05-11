@@ -18,7 +18,7 @@ export default new Vuex.Store({
     setUser(state, data) {
       state.user = data
       // 为了防止刷新丢失，我们需要把数据备份到本地存储
-      window.localStorage.setItem(TOKNE_KEY, JSON.stringify(state.user))
+      setItem(TOKNE_KEY, state.user)
     }
   },
   actions: {

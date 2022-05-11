@@ -122,8 +122,10 @@ export default {
             userApi
               .login_password(this.user)
               .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
+                this.$store.commit('setUser',res.data);
                 this.$message.success(res.message);
+                 this.$emit("refreshAndClose");
               })
             
           }
@@ -136,8 +138,10 @@ export default {
             userApi
               .login_code(this.user)
               .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
+                this.$store.commit('setUser',res.data);
                 this.$message.success(res.message);
+                 this.$emit("refreshAndClose");
               });
           }
         } else {

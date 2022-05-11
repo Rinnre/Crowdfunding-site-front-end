@@ -30,8 +30,8 @@ request.defaults.transformResponse = [
 request.interceptors.request.use(
     function (config) {
         const user = store.state.user;
-        if (user) {
-            config.headers['token'] =user
+        if (user&&user.token) {
+            config.headers['token'] =user.token;
         }
         // Do something before request is sent
         return config;
@@ -73,8 +73,8 @@ request.interceptors.response.use(
                     })
                 })
             }
-            // return Promise.reject('error')
-            return response.data;
+            return Promise.reject('error')
+            // return response.data;
         } else {
             return response.data;
         }

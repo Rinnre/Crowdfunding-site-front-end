@@ -15,7 +15,13 @@ const routes = [
     path: '/',
     // 设置路由的名称，命名路由。
     name: 'index',
-    component: () => import('@/views/home')
+    component: () => import('@/views/home/home')
+  },
+  {
+    path: '/user_index',
+    // 设置路由的名称，命名路由。
+    name: 'user',
+    component: () => import('@/views/user')
   }
 ]
 

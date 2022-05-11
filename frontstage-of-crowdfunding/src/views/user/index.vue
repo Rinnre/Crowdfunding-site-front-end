@@ -1,14 +1,38 @@
 <template>
-  <div class="item header">
-    <el-row class="tac">
-      <el-col :span="12">
-        <h5>默认颜色</h5>
+  <div class="maim">
+    <navigation></navigation>
+    <div class="main-wrap clearfix">
+      <div class="nav-side">
+
         <el-menu
           default-active="2"
           class="el-menu-vertical-demo"
+          text-color="#7a8087"
+          active-text-color="#222c37"
+          :default-openeds="['1', '2', '3', '4']"
           @open="handleOpen"
           @close="handleClose"
         >
+          <el-menu-item index="user_index">
+            <div slot="title">
+              <a href="https://me.modian.com/u/user_index">
+                <el-avatar
+                  :size="30"
+                  src="https://thirdwx.qlogo.cn/mmopen/vi_32/uX2etULict61IswIibDv4dibj4uwGCjrp2uuqbj6byYz7YxEFbYia8gGpIg7hTCZJ06kX6jyZWia51bJariboldmhVmw/0"
+                ></el-avatar>
+
+                <span
+                  style="
+                    margin-left: 15px;
+                    font-size: 16px;
+                    font-weight: normal;
+                    color: #7a8087;
+                  "
+                  >mo8579717294</span
+                >
+              </a>
+            </div>
+          </el-menu-item>
           <el-submenu index="1">
             <template slot="title">
               <span>我的动态和消息</span>
@@ -50,27 +74,54 @@
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
-      </el-col>
-    </el-row>
+
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import navigation from "@/components/header/navigation";
 export default {
   name: "UserIndex",
+  components: {
+    navigation: navigation,
+  },
   data() {
     return {};
   },
   methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-      }
-    }
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
+    },
+  },
 };
 </script>
 
 <style scoped>
+/* mian */
+.main-wrap {
+  padding: 0 !important;
+  width: 1080px;
+  margin: 60px auto 40px;
+}
+.main-wrap {
+  padding: 0 !important;
+  width: 1080px;
+  margin: 60px auto 40px;
+}
+.clearfix {
+  zoom: 1;
+}
+/* 侧边栏 */
+.nav-side {
+  width: 300px;
+  background: #f8f8f9;
+  float: left;
+  text-indent: 20px;
+  margin-right: 40px;
+}
 </style>

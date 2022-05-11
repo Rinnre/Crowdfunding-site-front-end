@@ -79,18 +79,22 @@
             </li>
             <!--用户头像-->
             <li v-if="userInfo" class="userInfo">
-              <el-popover placement="top-start" width="280px" trigger="hover">
-              
-                <el-avatar
-                  class="icon_pic"
-                  slot="reference"
-                  :src="userInfo.avatar"
-                  alt="avatar"
-                  style="width: 32px; height: 32px"
-                  onerror="javascript:this.src='https://s.moimg.net/new/images/headPic.png'"
-                ></el-avatar>
-                <user-info-bubble @refreshAndClose="refreshAndClose"></user-info-bubble>
-              </el-popover>
+              <router-link to="/user_index">
+                <el-popover placement="top-start" width="280px" trigger="hover">
+                  <el-avatar
+                    class="icon_pic"
+                    slot="reference"
+                    :src="userInfo.avatar"
+                    alt="avatar"
+                    style="width: 32px; height: 32px"
+                    onerror="javascript:this.src='https://s.moimg.net/new/images/headPic.png'"
+                  ></el-avatar>
+
+                  <user-info-bubble
+                    @refreshAndClose="refreshAndClose"
+                  ></user-info-bubble>
+                </el-popover>
+              </router-link>
             </li>
           </ul>
         </div>

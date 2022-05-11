@@ -6,15 +6,15 @@
     <div class="bubbleBox">
       <div class="bubbleCon">
         <div id="userInfoBox" class="userInfoBox" style="height: 380px">
-          <a id="personalInfo" href="https://me.modian.com/u/user_index"
-            ><span class="infoImg"
+          <router-link id="personalInfo" to="/user_index">
+            <span class="infoImg"
               ><img
                 :src="userInfo.avatar"
                 style="width: 90px; height: 90px"
                 onerror="javascript:this.src='https://s.moimg.net/new/images/headPic.png'"
             /></span>
-            <h3 class="personalId">{{ userInfo.nickName }}</h3></a
-          >
+            <h3 class="personalId">{{ userInfo.nickName }}</h3>
+          </router-link>
           <div class="userProject"></div>
           <input type="hidden" id="hover" name="hover" value="2" /><input
             type="hidden"
@@ -97,18 +97,18 @@ export default {
   },
   methods: {
     logout() {
-        this.$confirm('此操作将退出登录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-            this.$store.commit('setUser',null);
-          this.$message({
-            type: 'success',
-            message: '退出登录成功!'
-          });
-          this.$emit('refreshAndClose');
+      this.$confirm("此操作将退出登录, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        this.$store.commit("setUser", null);
+        this.$message({
+          type: "success",
+          message: "退出登录成功!",
         });
+        this.$emit("refreshAndClose");
+      });
     },
   },
 };

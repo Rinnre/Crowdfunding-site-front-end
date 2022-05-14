@@ -18,10 +18,24 @@ const routes = [
     component: () => import('@/views/home/home')
   },
   {
-    path: '/user_index',
+    path: '/user',
     // 设置路由的名称，命名路由。
     name: 'user',
-    component: () => import('@/views/user')
+    redirect:"/user/index",
+    component: () => import('@/views/user'),
+    children:[
+      {
+        path: '/user/index',
+        // 设置路由的名称，命名路由。
+        name: 'user_index',
+        component: () => import('@/views/user/components/user_index'),
+      },{
+        path: '/user/dynamic',
+        // 设置路由的名称，命名路由。
+        name: 'user_dynamic',
+        component: () => import('@/views/user/components/dynamic'),
+      },
+    ]
   }
 ]
 

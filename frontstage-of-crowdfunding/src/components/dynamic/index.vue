@@ -1,0 +1,213 @@
+<template>
+  <el-card class="box-card">
+    <div class="dynamic-head">
+      <el-avatar :size="50" :src="userInfo.avatar"></el-avatar>
+      <div style="margin-left: 61px; margin-top: -49px">
+        <div style="font-size: 16px; font-weight: normal; color: #7a8087">
+          {{ userInfo.nickName }}
+        </div>
+        <div
+          class="date"
+          style="
+            font-size: 12px;
+            font-weight: normal;
+            color: rgb(122, 128, 135);
+            margin-left: 3px;
+            margin-top: 7px;
+          "
+        >
+          05-13
+          <div class="dynamic-more">
+            <el-popover placement="bottom"   popper-class="dynamic-popover-more" trigger="click">
+              <div class="dynamic-operation">
+                <div class="dynamic-operation-top">
+                  <a href="">置顶</a>
+                </div>
+                <div class="dynamic-operation-delete">
+                  <a href="#">删除</a>
+                </div>
+              </div>
+              <span slot="reference"><i style="font-size:18px" class="iconfont icon-more"></i></span>
+            </el-popover>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dynamic-body">
+      <div class="dynamic-content">
+        <div class="dynamic-rich-text">
+          <span
+            >测试测试测试</span
+          >
+        </div>
+        <div class="dynamic-img-list">
+          <!-- <div :class="{'dynamic-img': len > 2;'dynamic-img1': len == 1;'dynamic-img2': len == 2}"> -->
+          <div class="dynamic-img2">
+            <img
+              class="lazyload"
+              data-original="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
+              src="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
+              style="width: 100%; display: block"
+            />
+          </div>
+          <div class="dynamic-img2">
+            <img
+              class="lazyload"
+              data-original="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
+              src="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
+              style="width: 100%; display: block"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dynamic-footer">
+      <div class="action share">
+        <i class="iconfont icon-share"></i>
+        转发
+      </div>
+      <div class="action thumbs">
+        <i class="iconfont icon-comment"></i>
+        评论
+      </div>
+      <div class="action thumbs">
+        <i class="iconfont icon-thumbs"></i>
+        点赞
+      </div>
+    </div>
+  </el-card>
+</template>
+
+<script>
+import store from "@/store";
+export default {
+  name: "Dynamic",
+  data() {
+    return {
+      userInfo: {},
+    };
+  },
+  created() {
+    this.userInfo = store.state.user;
+  },
+};
+</script>
+
+<style scoped>
+.box-card {
+    width: 100%;
+    border-radius: 18px;
+    background: #f7f7f7;
+    padding-top: 15px;
+    padding-left: 15px;
+}
+
+/* footer */
+.dynamic-footer {
+  display: flex;
+  height: 48px;
+  padding-left: 72px;
+}
+
+.action {
+  -ms-flex-align: center;
+  align-items: center;
+  color: #99a2aa;
+  cursor: pointer;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 12px;
+  height: 100%;
+  position: relative;
+  -ms-user-select: none;
+  user-select: none;
+  width: 92px;
+}
+.action:hover{
+
+  color: blue;
+
+}
+.action i {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: block;
+  height: 16px;
+  margin-right: 4px;
+  width: 20px;
+}
+.action i {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: block;
+  height: 16px;
+  margin-right: 4px;
+  width: 20px;
+}
+/* body */
+.dynamic-body {
+  margin-top: 10px;
+  padding-left: 61px;
+}
+.dynamic-content {
+  font-family: Helvetica Neue, Helvetica, Arial, Microsoft Yahei,
+    Hiragino Sans GB, Heiti SC, WenQuanYi Micro Hei, sans-serif;
+  width: 532px;
+}
+
+.dunamic-rich-text {
+  font-family: Helvetica Neue, Helvetica, Arial, Microsoft Yahei,
+    Hiragino Sans GB, Heiti SC, WenQuanYi Micro Hei, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  line-height: 22px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+/* img-list */
+.dynamic-content .dynamic-img-list {
+  width: 510px;
+  display: inline-block;
+  margin-top: 4px;
+}
+/* img */
+.dynamic-img-list .dynamic-img {
+  width: 160px;
+  margin-left: 10px;
+  margin-top: 10px;
+  float: left;
+}
+/* img */
+.dynamic-img-list .dynamic-img2 {
+  width: 245px;
+  margin-right: 10px;
+  margin-top: 10px;
+  float: left;
+}
+/* img */
+.dynamic-img-list .dynamic-img1 {
+  width: 100%;
+  margin-top: 10px;
+}
+/* more */
+.dynamic-more {
+  margin-right: 10px;
+  margin-top: -21px;
+  float: right;
+  cursor: pointer;
+}
+/* dynamic-operation */
+.dynamic-operation{
+    width:30px
+}
+.dynamic-operation  a{
+    color: #000;
+}
+.dynamic-operation  a:hover{
+    color: blue;
+}
+
+
+</style>

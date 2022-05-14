@@ -79,7 +79,7 @@
             </li>
             <!--用户头像-->
             <li v-if="userInfo" class="userInfo">
-              <router-link to="/user_index">
+              <router-link to="/user/index">
                 <el-popover placement="top-start" width="280px" trigger="hover">
                   <el-avatar
                     class="icon_pic"

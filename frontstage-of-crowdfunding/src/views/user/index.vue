@@ -3,22 +3,22 @@
     <navigation></navigation>
     <div class="main-wrap clearfix">
       <div class="nav-side">
-
         <el-menu
-          default-active="2"
+          default-active="/user/index"
           class="el-menu-vertical-demo"
           text-color="#7a8087"
           active-text-color="#222c37"
           :default-openeds="['1', '2', '3', '4']"
+          router
           @open="handleOpen"
           @close="handleClose"
         >
-          <el-menu-item index="user_index">
+          <el-menu-item index="/user/index">
             <div slot="title">
-              <a href="https://me.modian.com/u/user_index">
+              <!-- <router-link to="user_index"> -->
                 <el-avatar
                   :size="30"
-                  src="https://thirdwx.qlogo.cn/mmopen/vi_32/uX2etULict61IswIibDv4dibj4uwGCjrp2uuqbj6byYz7YxEFbYia8gGpIg7hTCZJ06kX6jyZWia51bJariboldmhVmw/0"
+                  :src="userInfo.avatar"
                 ></el-avatar>
 
                 <span
@@ -28,9 +28,9 @@
                     font-weight: normal;
                     color: #7a8087;
                   "
-                  >mo8579717294</span
+                  >{{userInfo.nickName}}</span
                 >
-              </a>
+              <!-- </router-link>  -->
             </div>
           </el-menu-item>
           <el-submenu index="1">
@@ -38,8 +38,7 @@
               <span>我的动态和消息</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">发布动态</el-menu-item>
-              <el-menu-item index="1-2">动态管理</el-menu-item>
+              <el-menu-item index="/user/dynamic">发布动态</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
@@ -74,7 +73,9 @@
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
-
+      </div>
+      <div class="main_right self">
+          <router-view/>
       </div>
     </div>
   </div>
@@ -82,13 +83,20 @@
 
 <script>
 import navigation from "@/components/header/navigation";
+import store from "@/store";
 export default {
-  name: "UserIndex",
+  name: "User",
   components: {
     navigation: navigation,
   },
   data() {
-    return {};
+    return {
+      userInfo: "",
+    };
+  },
+   created() {
+    this.userInfo = store.state.user;
+    // console.log(this.userInfo);
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -123,5 +131,14 @@ export default {
   float: left;
   text-indent: 20px;
   margin-right: 40px;
+}
+/* 主页面内容 */
+.main_right.self {
+  float: left;
+  position: relative;
+}
+.main_right {
+  width: 740px;
+  height: auto;
 }
 </style>

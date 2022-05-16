@@ -65,7 +65,7 @@
               <span>我的设置</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="4-1">个人资料</el-menu-item>
+              <el-menu-item index="/user/info">个人资料</el-menu-item>
               <el-menu-item index="4-2">账号认证</el-menu-item>
               <el-menu-item index="4-3">收款账户</el-menu-item>
               <el-menu-item index="4-4">管理地址薄</el-menu-item>

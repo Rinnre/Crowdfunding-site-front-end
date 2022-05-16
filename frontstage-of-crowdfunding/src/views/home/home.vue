@@ -6,7 +6,7 @@
     <div class="banner">
       <banner></banner>
     </div>
-    <!--  24小时榜单  -->
+    <!-- 24小时榜单 
     <div class="hot-24">
       <div class="hot-left">
         <h3 class="title">24小时金额榜</h3>
@@ -15,7 +15,7 @@
       <div class="hot-right">
         <h3 class="title">24小时创意榜</h3>
       </div>
-    </div>
+    </div> -->
     <div class="pro_field">
       <div class="pro_field_wrap clearfix">
         <div class="pro_nav clearfix">
@@ -29,8 +29,15 @@
           ></a>
         </div>
         <!--项目卡-->
-        <ul class="pro_ul clearfix"></ul>
+        <ul class="pro_ul clearfix">
+          <li v-for="index in 8" :key="index">
+            <project></project>
+          </li>
+        </ul>
       </div>
+    </div>
+    <div class="footer">
+       <el-divider></el-divider>
     </div>
   </div>
 </template>
@@ -38,12 +45,14 @@
 <script>
 import banner from "@/views/home/components/banner";
 import navigation from "@/components/header/navigation";
+import project from "@/components/home/project";
 
 export default {
   name: "Home",
   components: {
     banner: banner,
     navigation: navigation,
+    project: project,
   },
   data() {
     return {};
@@ -57,11 +66,11 @@ body.index-page {
 }
 .banner {
   width: 100%;
-  height: 321px;
+  height: 330px;
   position: relative;
   overflow: hidden;
 }
-.hot-24 {
+/* .hot-24 {
   width: 1080px;
   overflow: hidden;
   margin: 40px auto;
@@ -93,10 +102,11 @@ body.index-page {
   line-height: 64px;
   font-size: 24px;
   font-weight: 700;
-}
+} */
 
 .pro_field {
   width: 100%;
+  display: inline-block;
   background: #f8f8f9;
   padding: 0 0 40px;
 }
@@ -106,7 +116,7 @@ body.index-page {
 }
 .pro_nav {
   height: 24px;
-  padding: 40px 0 19px;
+  padding: 40px 0 30px;
   border-bottom: 1px solid #dee0e1;
 }
 .pro_ul {
@@ -138,11 +148,14 @@ ul {
   font-weight: 400;
   margin-top: 5px;
 }
-.iconfont {
-  font-family: "iconfont" !important;
-  font-size: 16px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+.pro_ul li {
+  float: left;
+  width: 255px;
+  height: 480px;
+  background-color: #fff;
+  margin: 10px 0 0 10px;
+  overflow: hidden;
+  transition: all 0.2s linear;
 }
 </style>

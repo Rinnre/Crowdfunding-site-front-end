@@ -2,21 +2,19 @@
   <div class="header-user">
     <section class="user_center_box">
       <div class="clearfix user_center_sidebar">
-        <a href="#" target="_blank">
-          <img
-            src="@/assets/md-logo@2x.png"
-            height="100%"
-            title="摩点 - 文化创意众筹社区"
-        /></a>
+          <router-link to="/">
+            <img
+              src="@/assets/md-logo@2x.png"
+              height="100%"
+              title="摩点 - 文化创意众筹社区"
+            />
+          </router-link>
         <ul class="site-nav">
           <li class="ga_find">
-            <a target="_blank" href="#">发现项目</a>
+            <router-link to="/project/list">发现项目</router-link>
           </li>
           <li class="ga_dongtai">
             <a target="_blank" href="#">创作者动态</a>
-          </li>
-          <li class="ga_release">
-            <a target="_blank" href="#">发布项目</a>
           </li>
         </ul>
         <div class="user-center right">

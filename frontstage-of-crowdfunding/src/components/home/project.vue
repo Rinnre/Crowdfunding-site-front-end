@@ -1,50 +1,47 @@
 <template>
   <div class="project_mian">
- 
-        <el-card :body-style="{ padding: '0px' }" shadow="hover">
-          <img
-            src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-            class="image"
-          />
-          <div style="padding: 14px">
-            <a
-              href="https://zhongchou.modian.com/item/120136.html"
-              target="_blank"
-              ><h3 class="pro_title">
-                人体解剖手稿 酷燃特装书盒！可收纳！可装饰！会发光！
-              </h3></a
-            >
-            <div class="author">
-              <div
-                class="au_logo"
-                style="
-                  background: url(https://p6.moimg.net/ico/2019/07/16/20190716_1563258148_5908.jpg?imageMogr2/auto-orient/strip)
-                    no-repeat center center;
-                  background-size: cover;
-                "
-              ></div>
-              <p>中信出版集团</p>
-            </div>
-            <div class="progress_bar">
-              <el-progress
-                :text-inside="true"
-                :stroke-width="20"
-                :percentage="10"
-                status="exception"
-              ></el-progress>
-            </div>
-            <div class="pro_bottom">
-              <div class="left">
-                <p class="status_title">¥<span>21.3万</span></p>
-              </div>
-              <div class="right">
-                <p class="gray_ex">
-                  <span backer_count="120136">532</span> 支持者
-                </p>
-              </div>
-            </div>
+    <el-card :body-style="{ padding: '0px' }" shadow="hover">
+      <router-link to="/project/detail/123">
+        <img
+          src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+          class="image"
+        />
+      </router-link>
+      <div style="padding: 14px">
+        <router-link to="/project/detail/123">
+          <h3 class="pro_title">
+            人体解剖手稿 酷燃特装书盒！可收纳！可装饰！会发光！
+          </h3>
+        </router-link>
+        <div class="author">
+          <div
+            class="au_logo"
+            style="
+              background: url(https://p6.moimg.net/ico/2019/07/16/20190716_1563258148_5908.jpg?imageMogr2/auto-orient/strip)
+                no-repeat center center;
+              background-size: cover;
+            "
+          ></div>
+          <p>中信出版集团</p>
+        </div>
+        <div class="progress_bar">
+          <el-progress
+            :text-inside="true"
+            :stroke-width="20"
+            :percentage="10"
+            status="exception"
+          ></el-progress>
+        </div>
+        <div class="pro_bottom">
+          <div class="left">
+            <p class="status_title">¥<span>21.3万</span></p>
           </div>
-        </el-card>
+          <div class="right">
+            <p class="gray_ex"><span backer_count="120136">532</span> 支持者</p>
+          </div>
+        </div>
+      </div>
+    </el-card>
   </div>
 </template>
 

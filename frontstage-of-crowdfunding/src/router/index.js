@@ -53,6 +53,18 @@ const routes = [
     name: 'project_list',
     component: () => import('@/views/project')
   },
+  {
+    path: '/project/detail/:id',
+    // 设置路由的名称，命名路由。
+    name: 'project_detail',
+    component: () => import('@/views/project/project_detail')
+  },
+  {
+    path: '/order/',
+    // 设置路由的名称，命名路由。
+    name: 'order',
+    component: () => import('@/views/order')
+  },
 ]
 
 const router = new VueRouter({

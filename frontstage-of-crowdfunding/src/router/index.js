@@ -60,6 +60,12 @@ const routes = [
     component: () => import('@/views/project/project_detail')
   },
   {
+    path: '/launch/project',
+    // 设置路由的名称，命名路由。
+    name: 'launch_project',
+    component: () => import('@/views/project/launch_project')
+  },
+  {
     path: '/order/',
     // 设置路由的名称，命名路由。
     name: 'order',

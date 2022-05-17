@@ -34,13 +34,13 @@
                   margin-top: -5px;
                 "
               >
-                <a
-                  href="https://account.modian.com/initiate/"
+                <router-link
+                  to="/launch/project"
                   target="_blank"
                   style="color: #fff"
                 >
                   <span>发起项目</span>
-                </a>
+                </router-link>
               </div>
             </li>
 

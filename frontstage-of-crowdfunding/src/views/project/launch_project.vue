@@ -12,7 +12,7 @@
           <el-step title="步骤 6 " description="辅助资料"></el-step>
         </el-steps>
       </div>
-      <div class="launch_project_body">
+      <div v-if="active == 0" class="launch_project_body">
         <div class="step_name">基础信息</div>
         <!-- 项目标题 -->
         <div class="column">
@@ -78,6 +78,7 @@
             </div>
           </div>
         </div>
+        <!-- 项目头图 -->
         <div class="column">
           <div class="column fix">
             <div class="left">
@@ -90,12 +91,55 @@
             <div class="right"></div>
           </div>
         </div>
+        <!-- 下一步 -->
         <div class="column">
           <div class="column fix">
             <div class="inner">
               <div class="btn" @click="next()">
-                  <i class="iconfont icon-save"></i>
-                  下一步
+                <i class="iconfont icon-save"></i>
+                下一步
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="active == 1" class="launch_project_body">
+        <div class="step_name">众筹目标</div>
+        <!-- 项目目标 -->
+        <div class="column">
+          <div class="column fix">
+            <div class="left">
+              <strong> <span>*</span> 项目目标 </strong>
+              <p>
+                为项目设置一个基础目标。众筹项目规则为「all-or-nothing」，如项目最终未达成目标金额，则不会收到任何资金。
+              </p>
+            </div>
+            <div class="right">
+              <div class="input">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="请输入目标金额"
+                  class=""
+                />
+              </div>
+              <p class="normal_tips">
+                如项目成功，平台将收取筹资总额的 6% 作为基础服务费
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- 下一步 -->
+        <div class="column">
+          <div class="column fix">
+            <div class="inner">
+              <div class="btn" @click="prev()">
+                <i class="iconfont icon-save"></i>
+                上一步
+              </div>
+              <div class="btn" @click="next()">
+                <i class="iconfont icon-save"></i>
+                下一步
               </div>
             </div>
           </div>
@@ -134,7 +178,32 @@ export default {
       console.log(file);
     },
     next() {
-      if (this.active++ > 2) this.active = 0;
+      if (this.active++ > 5) this.active = 0;
+      var timer = setInterval(function () {
+        let osTop =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        let ispeed = Math.floor(-osTop / 5);
+        document.documentElement.scrollTop = document.body.scrollTop =
+          osTop + ispeed;
+        this.isTop = true;
+        if (osTop === 0) {
+          clearInterval(timer);
+        }
+      }, 30);
+    },
+     prev() {
+       if(this.active--<0)this.active=0;
+      var timer = setInterval(function () {
+        let osTop =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        let ispeed = Math.floor(-osTop / 5);
+        document.documentElement.scrollTop = document.body.scrollTop =
+          osTop + ispeed;
+        this.isTop = true;
+        if (osTop === 0) {
+          clearInterval(timer);
+        }
+      }, 30);
     },
   },
 };
@@ -302,6 +371,7 @@ export default {
 }
 
 .inner .btn {
+  margin-left:10px;
   min-width: 120px;
   height: 40px;
   background: #00c4a1;

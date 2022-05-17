@@ -60,7 +60,7 @@ const routes = [
     component: () => import('@/views/project/project_detail')
   },
   {
-    path: '/order/',
+    path: '/order/:rewordId',
     // 设置路由的名称，命名路由。
     name: 'order',
     component: () => import('@/views/order')

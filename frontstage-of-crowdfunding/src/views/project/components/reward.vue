@@ -48,11 +48,9 @@
           </div>
 
           <div class="reward-time">预计回报发放时间 2022年07月内</div>
-          <button
-            class="btn back-btn"
-          >
+          <router-link class="btn back-btn" to="/order/123">
             去支持
-          </button>
+          </router-link>
         </el-collapse-item>
       </el-collapse>
     </div>

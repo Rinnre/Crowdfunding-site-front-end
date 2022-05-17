@@ -21,25 +21,25 @@ const routes = [
     path: '/user',
     // 设置路由的名称，命名路由。
     name: 'user',
-    redirect:"/user/index",
+    redirect: "/user/index",
     component: () => import('@/views/user'),
-    children:[
+    children: [
       {
         path: '/user/index',
         // 设置路由的名称，命名路由。
         name: 'user_index',
         component: () => import('@/views/user/components/user_index'),
-      },{
+      }, {
         path: '/user/dynamic',
         // 设置路由的名称，命名路由。
         name: 'user_dynamic',
         component: () => import('@/views/user/components/user_dynamic'),
-      },{
+      }, {
         path: '/user/info',
         // 设置路由的名称，命名路由。
         name: 'user_info',
         component: () => import('@/views/user/components/user_info'),
-      },{
+      }, {
         path: '/user/address',
         // 设置路由的名称，命名路由。
         name: 'user_addresss',
@@ -60,13 +60,15 @@ const routes = [
     component: () => import('@/views/project/project_detail')
   },
   {
+
     path: '/launch/project',
     // 设置路由的名称，命名路由。
     name: 'launch_project',
     component: () => import('@/views/project/launch_project')
   },
   {
-    path: '/order/',
+
+    path: '/order/:rewordId',
     // 设置路由的名称，命名路由。
     name: 'order',
     component: () => import('@/views/order')

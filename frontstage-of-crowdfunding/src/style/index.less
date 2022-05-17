@@ -111,3 +111,33 @@ body {
   background: #fff;
 }
 
+.clearfix {
+  display: block;
+  height: 1%;
+  zoom: 1;
+}
+.clearfix:after, .clearfix:before {
+  content: "";
+  display: table;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  height: 0 !important;
+}
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.clearfix:after {
+  clear: both;
+}
+.clearfix:after, .clearfix:before {
+  content: "";
+  display: table;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  height: 0 !important;
+}
+

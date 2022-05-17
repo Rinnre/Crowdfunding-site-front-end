@@ -117,7 +117,9 @@
               </p>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="项目评论" name="second">项目评论</el-tab-pane>
+          <el-tab-pane label="项目评论" name="second">
+            <comment></comment>
+          </el-tab-pane>
         </el-tabs>
       </div>
       <div class="project_body_right">
@@ -165,12 +167,14 @@
 <script>
 import navigation from "@/components/header/navigation";
 import reward from "@/views/project/components/reward";
+import comment from "@/components/comment"
 
 export default {
   name: "projectDetail",
   components: {
     navigation: navigation,
     reward: reward,
+    comment:comment
   },
   data() {
     return {

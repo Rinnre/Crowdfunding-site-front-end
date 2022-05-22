@@ -72,7 +72,7 @@ import navigation from "@/components/header/navigation";
 import project from "@/components/home/project";
 
 export default {
-  name: "",
+  name: "Project",
   components: {
     navigation: navigation,
     project: project,

@@ -44,6 +44,16 @@ const routes = [
         // 设置路由的名称，命名路由。
         name: 'user_addresss',
         component: () => import('@/views/user/components/user_address'),
+      },{
+        path: '/user/order',
+        // 设置路由的名称，命名路由。
+        name: 'user_order',
+        component: () => import('@/views/user/components/user_order'),
+      },{
+        path: '/user/pro_optimistic',
+        // 设置路由的名称，命名路由。
+        name: 'user_pro_optimistic',
+        component: () => import('@/views/user/components/pro_optimistic'),
       },
     ]
   },

@@ -47,7 +47,7 @@
               <span>我的订单</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="2-1">订单信息</el-menu-item>
+              <el-menu-item index="/user/order">订单信息</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
@@ -56,7 +56,7 @@
               <span>我的关注</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="3-1">看好的项目</el-menu-item>
+              <el-menu-item index="/user/pro_optimistic">看好的项目</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 

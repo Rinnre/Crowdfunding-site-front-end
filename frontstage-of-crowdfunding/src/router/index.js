@@ -60,6 +60,11 @@ const routes = [
         // 设置路由的名称，命名路由。
         name: 'user_address',
         component: () => import('@/views/user/components/user_address'),
+      },{
+        path: '/user/auth',
+        // 设置路由的名称，命名路由。
+        name: 'user_auth',
+        component: () => import('@/views/user/components/user_auth'),
       },
     ]
   },

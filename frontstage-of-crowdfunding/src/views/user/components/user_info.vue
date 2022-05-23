@@ -63,7 +63,7 @@
         <label> 认证情况 </label>
         <div class="item_r">
           <p class="no_ren text" style="margin-top: -27px">
-            <el-link :underline="false" type="warning">
+            <el-link :underline="false" href="#/user/auth" type="warning">
               <i style="padding-right: 6px" class="iconfont icon-warning"></i
               >未认证</el-link
             >

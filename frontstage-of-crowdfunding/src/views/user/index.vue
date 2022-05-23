@@ -75,7 +75,7 @@
             </template>
             <el-menu-item-group>
               <el-menu-item index="/user/info">个人资料</el-menu-item>
-              <el-menu-item index="4-2">账号认证</el-menu-item>
+              <el-menu-item index="/user/auth">账号认证</el-menu-item>
               <el-menu-item index="/user/address">管理地址薄</el-menu-item>
               <el-menu-item index="4-5">账户与安全</el-menu-item>
             </el-menu-item-group>

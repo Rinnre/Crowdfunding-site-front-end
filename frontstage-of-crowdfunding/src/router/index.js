@@ -66,6 +66,18 @@ const routes = [
         name: 'user_auth',
         component: () => import('@/views/user/components/user_auth'),
       },
+      {
+        path: '/user/safe',
+        // 设置路由的名称，命名路由。
+        name: 'user_safe',
+        component: () => import('@/views/user/components/user_safe'),
+      },
+      {
+        path: '/user/project',
+        // 设置路由的名称，命名路由。
+        name: 'user_project',
+        component: () => import('@/views/user/components/user_project'),
+      },
     ]
   },
   {

@@ -47,7 +47,7 @@
               <span>我的项目</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/user/order">发起的项目</el-menu-item>
+              <el-menu-item index="/user/project">发起的项目</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
@@ -77,7 +77,7 @@
               <el-menu-item index="/user/info">个人资料</el-menu-item>
               <el-menu-item index="/user/auth">账号认证</el-menu-item>
               <el-menu-item index="/user/address">管理地址薄</el-menu-item>
-              <el-menu-item index="4-5">账户与安全</el-menu-item>
+              <el-menu-item index="/user/safe">账户与安全</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

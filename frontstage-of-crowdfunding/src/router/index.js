@@ -55,6 +55,12 @@ const routes = [
         name: 'user_pro_optimistic',
         component: () => import('@/views/user/components/pro_optimistic'),
       },
+      {
+        path: '/user/address',
+        // 设置路由的名称，命名路由。
+        name: 'user_address',
+        component: () => import('@/views/user/components/user_address'),
+      },
     ]
   },
   {

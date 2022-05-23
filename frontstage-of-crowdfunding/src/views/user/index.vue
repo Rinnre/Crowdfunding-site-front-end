@@ -8,7 +8,7 @@
           class="el-menu-vertical-demo"
           text-color="#7a8087"
           active-text-color="#222c37"
-          :default-openeds="['1', '2', '3', '4']"
+          :default-openeds="['1', '2', '3', '4','5']"
           router
           @open="handleOpen"
           @close="handleClose"
@@ -42,7 +42,16 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="2">
+           <el-submenu index="2">
+            <template slot="title">
+              <span>我的项目</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/user/order">发起的项目</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+          <el-submenu index="3">
             <template slot="title">
               <span>我的订单</span>
             </template>
@@ -51,7 +60,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="3">
+          <el-submenu index="4">
             <template slot="title">
               <span>我的关注</span>
             </template>
@@ -60,15 +69,14 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="4">
+          <el-submenu index="5">
             <template slot="title">
               <span>我的设置</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="/user/info">个人资料</el-menu-item>
               <el-menu-item index="4-2">账号认证</el-menu-item>
-              <el-menu-item index="4-3">收款账户</el-menu-item>
-              <el-menu-item index="4-4">管理地址薄</el-menu-item>
+              <el-menu-item index="/user/address">管理地址薄</el-menu-item>
               <el-menu-item index="4-5">账户与安全</el-menu-item>
             </el-menu-item-group>
           </el-submenu>

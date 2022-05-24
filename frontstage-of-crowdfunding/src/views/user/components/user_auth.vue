@@ -115,11 +115,9 @@
 </template>
 
 <script>
-// import '~/assets/css/hospital_personal.css'
-// import '~/assets/css/hospital.css'
+
 import "@/assets/css/personal.css";
-// import dictApi from '@/api/dict'
-// import userInfoApi from '@/api/userInfo'
+
 const defaultForm = {
   name: "",
   certificatesType: "",

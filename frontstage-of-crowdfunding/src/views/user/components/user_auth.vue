@@ -4,7 +4,7 @@
     <div class="page-container">
       <div>
         <div class="title">实名认证</div>
-          <el-divider></el-divider>
+        <el-divider></el-divider>
         <div class="tips">
           <span class="iconfont"></span>
           完成实名认证后才能发起项目众筹，为了不影响后续步骤，建议提前实名认证。
@@ -19,7 +19,7 @@
               <el-form-item prop="name" label="姓名：" class="form-normal">
                 <div class="name-input">
                   <el-input
-                    v-model="userauth.name"
+                    v-model="userauth.realName"
                     placeholder="请输入联系人姓名全称"
                     class="input v-input"
                   />
@@ -27,7 +27,7 @@
               </el-form-item>
               <el-form-item prop="certificatesType" label="证件类型：">
                 <el-select
-                  v-model="userauth.certificatesType"
+                  v-model="userauth.authType"
                   placeholder="请选择证件类型"
                   class="v-select patient-select"
                 >
@@ -42,7 +42,7 @@
               </el-form-item>
               <el-form-item prop="certificatesNo" label="证件号码：">
                 <el-input
-                  v-model="userauth.certificatesNo"
+                  v-model="userauth.idNumber"
                   placeholder="请输入联系人证件号码"
                   class="input v-input"
                 />
@@ -58,12 +58,12 @@
                     >
                       <div class="upload-inner-wrapper">
                         <img
-                          v-if="userauth.certificatesUrl"
-                          :src="userauth.certificatesUrl"
+                          v-if="userauth.frontIdPicture"
+                          :src="userauth.frontIdPicture"
                           class="avatar"
                         />
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        <div v-if="!userauth.certificatesUrl" class="text">
+                        <div v-if="!userauth.frontIdPicture" class="text">
                           上传证件合照
                         </div>
                       </div>
@@ -94,14 +94,17 @@
             >
               <el-form-item prop="name" label="姓名：" class="form-normal">
                 <div class="name-input">
-                  {{ userInfo.name }}
+                  {{ userInfo.realName }}
                 </div>
               </el-form-item>
               <el-form-item prop="name" label="证件类型：">
-                {{ userInfo.certificatesType }}
+                {{ userInfo.authType }}
               </el-form-item>
               <el-form-item prop="name" label="证件号码：">
-                {{ userInfo.certificatesNo }}
+                {{ userInfo.idNumber }}
+              </el-form-item>
+              <el-form-item prop="name" label="认证状态">
+                {{ userAuthStatus }}
               </el-form-item>
             </el-form>
           </div>
@@ -115,39 +118,47 @@
 </template>
 
 <script>
-
 import "@/assets/css/personal.css";
+import store from "@/store";
+import user from "@/api/user";
 
 const defaultForm = {
-  name: "",
-  certificatesType: "",
-  certificatesNo: "",
-  certificatesUrl: "",
+  realName: "",
+  authType: "",
+  idNumber: "",
+  frontIdPicture: "",
 };
 export default {
   data() {
     return {
       userauth: defaultForm,
-      certificatesTypeList: [],
-      fileUrl: "http://localhost/api/oss/file/fileUpload",
-      userInfo: {
-        param: {},
-        authStatus: 0,
-      },
+      certificatesTypeList: [{ name: "身份证", value: 1 }],
+      fileUrl: "http://localhost/user/upload/picture",
+      userInfo: {},
       submitBnt: "提交",
       formData: {},
+      userAuthStatus:""
     };
   },
   created() {
-    // this.init()
+    this.userInfo = store.state.user;
+    if (this.userInfo.authStatus != 0) {
+      this.init();
+    }
   },
   methods: {
     init() {
       this.getUserInfo();
     },
     getUserInfo() {
-      userInfoApi.getUserInfo().then((response) => {
+      user.getUserAuth().then((response) => {
         this.userInfo = response.data;
+        if(this.userInfo.authStatus == 1){
+          this.userAuthStatus = "已认证";
+        }
+        if(this.userInfo.authStatus == 2){
+          this.userAuthStatus = "认证中";
+        }
       });
     },
     saveUserauth() {
@@ -156,10 +167,13 @@ export default {
         return;
       }
       this.submitBnt = "正在提交...";
-      userInfoApi
-        .saveUserAuth(this.userauth)
+      user
+        .doUserAuth(this.userauth)
         .then((response) => {
           this.$message.success("提交成功");
+          // 更新用户状态
+          this.userInfo.authStatus = 2;
+          this.$store.commit("setUser", this.userInfo);
           window.location.reload();
         })
         .catch((e) => {
@@ -172,7 +186,7 @@ export default {
         return;
       }
       // 填充上传文件列表
-      this.userauth.certificatesUrl = file.response.data;
+      this.userauth.frontIdPicture = file.response.data;
     },
   },
 };

@@ -16,18 +16,24 @@
             margin-top: 7px;
           "
         >
-          05-13
+          {{ dynamic.createTime }}
           <div class="dynamic-more">
-            <el-popover placement="bottom"   popper-class="dynamic-popover-more" trigger="click">
+            <el-popover
+              placement="bottom"
+              popper-class="dynamic-popover-more"
+              trigger="click"
+            >
               <div class="dynamic-operation">
                 <div class="dynamic-operation-top">
-                  <a href="">置顶</a>
+                  <a href="javascript:;">置顶</a>
                 </div>
                 <div class="dynamic-operation-delete">
-                  <a href="#">删除</a>
+                  <a href="javascript:;" @click="deleteDynamic()">删除</a>
                 </div>
               </div>
-              <span slot="reference"><i style="font-size:18px" class="iconfont icon-more"></i></span>
+              <span slot="reference"
+                ><i style="font-size: 18px" class="iconfont icon-more"></i
+              ></span>
             </el-popover>
           </div>
         </div>
@@ -36,25 +42,22 @@
     <div class="dynamic-body">
       <div class="dynamic-content">
         <div class="dynamic-rich-text">
-          <span
-            >测试测试测试</span
-          >
+          <span>{{ dynamic.content }}</span>
         </div>
         <div class="dynamic-img-list">
           <!-- <div :class="{'dynamic-img': len > 2;'dynamic-img1': len == 1;'dynamic-img2': len == 2}"> -->
-          <div class="dynamic-img2">
+          <div
+            :class="{
+              'dynamic-img': dynamic.pictureList.length > 2,
+              'dynamic-img1': dynamic.pictureList.length == 1,
+              'dynamic-img2': dynamic.pictureList.length == 2,
+            }"
+            v-for="picture in dynamic.pictureList"
+            :key="picture.id"
+          >
             <img
               class="lazyload"
-              data-original="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
-              src="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
-              style="width: 100%; display: block"
-            />
-          </div>
-          <div class="dynamic-img2">
-            <img
-              class="lazyload"
-              data-original="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
-              src="https://p6.moimg.net/path/dst_community/202205/1010/2442/2205102442nYeZKbq2oV0kyWGZNQyB56xXONDa9m.jpg"
+              :src="picture.picturePath"
               style="width: 100%; display: block"
             />
           </div>
@@ -82,6 +85,12 @@
 import store from "@/store";
 export default {
   name: "Dynamic",
+  props: {
+    dynamic: {
+      type: Object,
+      default: {},
+    },
+  },
   data() {
     return {
       userInfo: {},
@@ -89,17 +98,36 @@ export default {
   },
   created() {
     this.userInfo = store.state.user;
+    // console.log(this.userInfo)
+  },
+  methods: {
+    deleteDynamic() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$emit("deleteDynamic", this.dynamic.id);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
   },
 };
 </script>
 
 <style scoped>
 .box-card {
-    width: 100%;
-    border-radius: 18px;
-    background: #f7f7f7;
-    padding-top: 15px;
-    padding-left: 15px;
+  width: 100%;
+  border-radius: 18px;
+  background: #f7f7f7;
+  padding-top: 15px;
+  padding-left: 15px;
 }
 
 /* footer */
@@ -123,10 +151,8 @@ export default {
   user-select: none;
   width: 92px;
 }
-.action:hover{
-
+.action:hover {
   color: blue;
-
 }
 .action i {
   background-position: 50%;
@@ -199,15 +225,13 @@ export default {
   cursor: pointer;
 }
 /* dynamic-operation */
-.dynamic-operation{
-    width:30px
+.dynamic-operation {
+  width: 30px;
 }
-.dynamic-operation  a{
-    color: #000;
+.dynamic-operation a {
+  color: #000;
 }
-.dynamic-operation  a:hover{
-    color: blue;
+.dynamic-operation a:hover {
+  color: blue;
 }
-
-
 </style>

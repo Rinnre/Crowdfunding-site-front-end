@@ -4,26 +4,25 @@
       <p>个人资料</p>
       <div class="userInfo-operation">
         <a v-if="!is_edit" @click="is_edit = true">编辑</a>
-        <a v-else @click="is_edit = false">保存</a>
+        <a v-else @click="updateUserInfo()">保存</a>
+        <a style="margin-left:10px" v-if="is_edit" @click="cancel()">取消</a>
       </div>
     </div>
     <div class="detail center">
       <el-form ref="form" :model="userInfo" label-width="80px" size="mini">
         <div class="item">
           <el-form-item label="头像">
-            <!-- <el-tooltip effect="dark" content="更换头像" placement="bottom"> -->
-              <img
-                src="https://thirdwx.qlogo.cn/mmopen/vi_32/uX2etULict61IswIibDv4dibj4uwGCjrp2uuqbj6byYz7YxEFbYia8gGpIg7hTCZJ06kX6jyZWia51bJariboldmhVmw/0"
-                style="width: 60px; border-radius: 50%; margin-left: 48px"
-                @click="is_update()"
-              />
-            <!-- </el-tooltip> -->
+            <img
+              :src="userInfo.avatar"
+              style="width: 60px; border-radius: 50%; margin-left: 48px"
+              @click="is_update()"
+            />
             <image-cropper
               v-show="imagecropperShow"
               :key="imagecropperKey"
               :width="300"
               :height="300"
-              url="http://localhost:8222/study/oss/upload/avatar"
+              url="http://localhost/user/upload/picture"
               field="file"
               @crop-upload-success="cropSuccess"
               @close="close"
@@ -32,12 +31,23 @@
         </div>
         <div class="item">
           <el-form-item label="昵称">
-            <el-input :readonly="!is_edit" v-model="userInfo.name"></el-input>
+            <el-input
+              :readonly="!is_edit"
+              v-model="userInfo.nickName"
+            ></el-input>
           </el-form-item>
         </div>
         <div class="item">
           <el-form-item label="性别">
-            <el-input :readonly="!is_edit" v-model="userInfo.name"></el-input>
+            <el-select :disabled="!is_edit" v-model="gender">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </div>
         <div class="item">
@@ -53,7 +63,11 @@
 
         <div class="item">
           <el-form-item label="个人简介">
-            <el-input :readonly="!is_edit" v-model="userInfo.name"></el-input>
+            <el-input
+              :readonly="!is_edit"
+              v-model="userInfo.biography"
+              placeholder="这个人很懒,什么都没有留下..."
+            ></el-input>
           </el-form-item>
         </div>
       </el-form>
@@ -64,8 +78,14 @@
         <div class="item_r">
           <p class="no_ren text" style="margin-top: -27px">
             <el-link :underline="false" href="#/user/auth" type="warning">
-              <i style="padding-right: 6px" class="iconfont icon-warning"></i
-              >未认证</el-link
+              <i
+                style="padding-right: 6px"
+                :class="{
+                  'iconfont icon-warning': userInfo.authStatus != 1,
+                  'iconfont icon-success': userInfo.authStatus == 1,
+                }"
+              ></i
+              >{{ userAuthStutus }}</el-link
             >
           </p>
         </div>
@@ -75,7 +95,9 @@
 </template>
 
 <script>
-import ImageCropper from '@/components/ImageCropper'
+import ImageCropper from "@/components/ImageCropper";
+import user from "@/api/user";
+import store from "@/store";
 
 export default {
   components: { ImageCropper },
@@ -86,41 +108,107 @@ export default {
       userInfo: {
         name: "mo8579717294",
       },
+      gender: "保密",
+      options: [
+        {
+          key: 0,
+          value: "保密",
+        },
+        {
+          key: 1,
+          value: "男",
+        },
+        {
+          key: 2,
+          value: "女",
+        },
+      ],
       imagecropperShow: false,
       imagecropperKey: 0,
+      userAuthStutus: "",
       is_edit: false,
     };
   },
+  created() {
+    this.initUserInfo();
+  },
   methods: {
+    // 初始化信息
+    initUserInfo() {
+      user.getUserInfo().then((res) => {
+        this.userInfo = res.data;
+        // 计算性别和认证状态
+        if (this.userInfo.gender == 1) {
+          this.gender = "男";
+        } else if (this.userInfo.gender == 0) {
+          this.gender = "女";
+        } else {
+          this.gender = "保密";
+        }
+        if (this.userInfo.authStatus == 0) {
+          this.userAuthStutus = "未认证";
+        } else if (this.userInfo.authStatus == 1) {
+          this.userAuthStutus = "已认证";
+        } else {
+          this.userAuthStutus = "认证中";
+        }
+      });
+    },
     // 判断是否为编辑模式
-    is_update(){
-      if(this.is_edit){
+    is_update() {
+      if (this.is_edit) {
         this.imagecropperShow = true;
       }
     },
     // 讲师头像上传成功后的回调函数
-    cropSuccess (data) {
-      this.imagecropperShow = false
+    cropSuccess(data) {
+      this.imagecropperShow = false;
       // 上传成功后，重新打开上传组件时初始化组件，否则显示上一次的上传结果
-      this.imagecropperKey = this.imagecropperKey + 1
-      userApi.updateAvatar(data.data).then((response) => {
-        if (response.data.success) {
-          this.loginInfo.avatar = data.data.url
-        }
-      })
+      this.imagecropperKey = this.imagecropperKey + 1;
+      this.userInfo.avatar = data;
     },
     // 关闭头像上传组件后的回调函数
-    close () {
-      this.imagecropperShow = false
+    close() {
+      this.imagecropperShow = false;
       // 上传失败后，重新打开上传组件时初始化组件，否则显示上一次的上传结果
-      this.imagecropperKey = this.imagecropperKey + 1
+      this.imagecropperKey = this.imagecropperKey + 1;
       this.$message({
-        type: 'info',
-        message: '已取消头像上传'
-      })
-    }
-
-  }
+        type: "info",
+        message: "已取消头像上传",
+      });
+    },
+    updateUserInfo() {
+      // 数据转换
+      if (this.gender == "男") {
+        this.userInfo.gender = 1;
+      } else if (this.gender == "女") {
+        this.userInfo.gender = 0;
+      } else {
+        this.userInfo.gender = "2";
+      }
+      user.modifyUserInfo(this.userInfo).then((res) => {
+        this.$message.success("保存成功");
+        // 更新本地其他组件数据
+        let user = this.$store.state.user;
+        user.nickName = this.userInfo.nickName;
+        user.avatar = this.userInfo.avatar
+        this.$store.state.user = user;
+        this.$store.commit('setUser',user);
+        this.initUserInfo();
+        this.is_edit = false;
+      });
+    },
+    cancel() {
+       this.$confirm('是否取消修改信息, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() =>{
+            this.initUserInfo();
+            this.is_edit = false;
+        })
+    },
+  },
 };
 </script>
 
@@ -257,5 +345,7 @@ export default {
   margin-top: 10px;
 }
 
-
+.item /deep/ .el-select .el-input.is-disabled .el-input__inner {
+  background-color: #fff;
+}
 </style>

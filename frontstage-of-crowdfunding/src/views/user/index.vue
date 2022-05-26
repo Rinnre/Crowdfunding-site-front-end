@@ -91,7 +91,6 @@
 
 <script>
 import navigation from "@/components/header/navigation";
-import store from "@/store";
 export default {
   name: "User",
   components: {
@@ -99,19 +98,17 @@ export default {
   },
   data() {
     return {
-      userInfo: "",
+      userInfo: this.$store.state.user,
     };
   },
    created() {
-    this.userInfo = store.state.user;
-    // console.log(this.userInfo);
   },
   methods: {
     handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     },
   },
 };

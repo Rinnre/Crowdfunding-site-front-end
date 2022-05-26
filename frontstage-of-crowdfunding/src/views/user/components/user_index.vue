@@ -5,12 +5,11 @@
       <div class="userId">UID {{ userInfo.uid }}</div>
       <div
         class="bg"
-        style="
-          background: url(https://thirdwx.qlogo.cn/mmopen/vi_32/uX2etULict61IswIibDv4dibj4uwGCjrp2uuqbj6byYz7YxEFbYia8gGpIg7hTCZJ06kX6jyZWia51bJariboldmhVmw/0)
-            no-repeat center center;
-          -webkit-background-size: cover;
-          background-size: cover;
-        "
+        :style="{
+          backgroundImage: 'url(' + userInfo.avatar + ')',
+          backgroundRepeat: 'no-repeat',
+          'background-size': 'cover',
+        }"
       ></div>
       <div class="bg meng"></div>
       <img
@@ -30,17 +29,17 @@
         </p>
       </div>
       <div class="edit-btn">
-        <a href="https://me.modian.com/u/info">
+        <router-link to="/user/info">
           <i class="iconfont icon-editperson"></i>
           编辑
-        </a>
+        </router-link>
       </div>
     </div>
     <!-- 认证警告 -->
-    <div class="jzb_make_up" style="display: black">
+    <div class="jzb_make_up" v-if="userInfo.authStatus==0" >
       <i class="iconfont icon-warning"></i>
       因国家监管要求，您的收款账户须升级认证，否则可能无法使用提现等功能
-      <a id="jzb_make_up_a" href="javascript:void(0)" data-status="0"
+      <a id="jzb_make_up_a" href="#/user/auth" 
         >立即升级认证</a
       >
     </div>
@@ -71,15 +70,19 @@
     <div class="column info">
       <p>我的动态</p>
       <p>
-        <a href="/dynamic"><i class="iconfont icon-edit"></i>发布动态</a>
-      </p>
-      <p>
-        <a href="/dynamic/manager"><i class="iconfont icon-eye"></i>查看更多</a>
+        <router-link to="/user/dynamic"><i class="iconfont icon-edit"></i>发布动态</router-link>
       </p>
     </div>
     <div class="tab_cont">
-      <div class="info_list">
-        <dynamic></dynamic>
+      <div
+        class="info_list"
+        v-for="dynamicItem in dynamicList"
+        :key="dynamicItem.id"
+      >
+        <dynamic
+          :dynamic="dynamicItem"
+          @deleteDynamic="deleteDynamic"
+        ></dynamic>
       </div>
     </div>
   </div>
@@ -88,19 +91,37 @@
 <script>
 import store from "@/store";
 import dynamic from "@/components/dynamic/index";
+import user from "@/api/user";
 
 export default {
   name: "UserIndex",
   components: {
     dynamic: dynamic,
   },
-  date() {
+  data() {
     return {
       userInfo: "",
+      dynamicList: [],
     };
   },
   created() {
     this.userInfo = store.state.user;
+    this.loadDynamicList();
+  },
+  methods: {
+    // 加载动态数据
+    loadDynamicList() {
+      user.getDynamicList().then((res) => {
+        this.dynamicList = res.data;
+      });
+    },
+    // 删除动态
+    deleteDynamic(dynamicId) {
+      user.removeDynamic(dynamicId).then((res) => {
+        this.$message.success("删除成功");
+        this.loadDynamicList();
+      });
+    },
   },
 };
 </script>
@@ -309,7 +330,7 @@ p.introduction {
 .main_right .info_list,
 .main_right .pro_list {
   overflow: hidden;
-  margin-bottom: 55px;
+  margin-bottom: 19px;
 }
 .main_right .info_item {
   overflow: hidden;

@@ -18,9 +18,10 @@
               maxlength="1000"
               placeholder="输入内容..."
               style="resize: none; height: 76px"
+              v-model="dynamic.content"
             ></textarea>
             <span class="word-count"
-              ><em class="current">0</em> /
+              ><em class="current">{{ dynamic.content.length }}</em> /
               <em data-max="1000" class="max">1000</em></span
             >
             <div class="_topicList"></div>
@@ -33,24 +34,30 @@
                   <div class="mface-inner dy_img_field">
                     <div class="dy_img_list">
                       <div
-                        class="img_list img_lists img"
-                        @mousemove="deleteVisual = true"
-                        @mouseleave="deleteVisual = false"
+                        v-for="(pic, index) in dynamic.pictureList"
+                        :key="index"
                       >
-                        <img
-                          src="https://p6.moimg.net/path/dst_project/202205/1414/5754/22051457544Rlaex12qJdYEjQZo8vpw98PL0ABGZ.png"
-                          style="height: auto"
-                        />
-                        <p class="img_meng" v-if="deleteVisual">
-                          <span class="del_img"></span>
-                        </p>
+                        <div
+                          class="img_list img_lists img"
+                          @mousemove="deleteVisual = true"
+                          @mouseleave="deleteVisual = false"
+                        >
+                          <img :src="pic.picturePath" style="height: auto" />
+                          <p class="img_meng" v-if="deleteVisual">
+                            <span
+                              class="del_img"
+                              @click="deletePicture(index)"
+                            ></span>
+                          </p>
+                        </div>
                       </div>
 
                       <div class="img_list dyup_btn">
                         <input
                           type="file"
                           id="dy_img_input"
-                          multiple=""
+                          @change="uploadPicture($event)"
+                          multiple="multiple"
                           name="dy_img_input[]"
                           accept="image/jpeg,image/gif,image/png"
                         />
@@ -85,20 +92,10 @@
             </div>
             <div class="right ordinary-operate">
               <ul>
-                <!-- <li @click="privacyVisual=true" class="btn changeable show-select status limit">
-                  <span class="changeable-txt" data-type="0">公开</span>
-                  <i
-                    style="margin-left: 8px; color: #96a7be"
-                    class="iconfont icon-downmore"
-                  ></i>
-                  <ul class="select-options" v-if="privacyVisual" >
-                    <li data-type="0">公开</li>
-                    <li data-type="1">仅自己可见</li>
-                  </ul>
-                </li> -->
-               
                 <li class="edit changeable" style="min-width: auto">
-                  <span class="btn submit changeable-txt" data-type="0"
+                  <span
+                    class="btn submit changeable-txt"
+                    @click="submitDynamic()"
                     >发布</span
                   >
                 </li>
@@ -112,18 +109,71 @@
 </template>
 
 <script>
+import dynamic from "@/api/dynamic";
 export default {
   name: "publicDynamic",
   data() {
     return {
       deleteVisual: false,
-      privacyVisual: true,
+      dynamic: {
+        content: "",
+        pictureList: [],
+      },
     };
   },
-  methods: {
-     handleCommand(command) {
-        this.$message('click on item ' + command);
+  watch: {
+    "dynamic.content"(val) {
+      if (val.length >= 1000) {
+        this.$message.error("文字输入达到上限！");
+        this.dynamic.content = val.substring(0, 1000);
       }
+    },
+  },
+  methods: {
+    handleCommand(command) {
+      this.$message("click on item " + command);
+    },
+    // 图片上传
+    uploadPicture(e) {
+      var param = new FormData();
+      let files = e.target.files[0];
+      param.append("file", files);
+
+      dynamic.uploadPicture(param).then((response) => {
+        this.$message.success(response.message);
+        this.dynamic.pictureList.push({ id: null, picturePath: response.data });
+        // console.log(response)
+      });
+    },
+    // 发布动态
+    submitDynamic() {
+      if (
+        this.dynamic.content.length == 0 &&
+        this.dynamic.pictureList.length == 0
+      ) {
+        this.$message.error("发布内容不能为空！");
+        return;
+      }
+      dynamic.saveDynamic(this.dynamic).then((response) => {
+        this.$message({
+          type: "success",
+          message: response.message,
+          duration: 1500,
+        });
+
+        setTimeout(function () {
+          // 数据清空
+          this.dynamic = {};
+          // 刷新页面
+          location.reload();
+        }, 500);
+      });
+    },
+    // 删除动态图片
+    deletePicture(index) {
+      // console.log(index)
+      this.dynamic.pictureList.splice(index, 1);
+    },
   },
 };
 </script>
@@ -388,10 +438,10 @@ input {
 }
 
 .el-dropdown-link {
-    cursor: pointer;
-    color: #409EFF;
-  }
-  .el-icon-arrow-down {
-    font-size: 12px;
-  }
+  cursor: pointer;
+  color: #409eff;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
+}
 </style>

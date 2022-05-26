@@ -9,7 +9,7 @@ import { Message } from 'element-ui'
 
 // axios.create 方法：复制一个 axios
 const request = axios.create({
-    baseURL: "http://localhost:9533", // 基础路径
+    baseURL: "http://localhost", // 基础路径
     timeout: 5000 // 请求超时时间
 });
 

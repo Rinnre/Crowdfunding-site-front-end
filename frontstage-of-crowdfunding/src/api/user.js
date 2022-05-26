@@ -22,6 +22,30 @@ export default {
             method:'GET'
         })
     },
+    // 修改用户密码
+    modifyPassword(params){
+        return request({
+            url: `${api_path}/modify/password`,
+            method:'PUT',
+            data: params
+        })
+    },
+    // 验证手机验证码
+    confirm_code(params){
+        return request({
+            url: `${api_path}/confirm/modify_code`,
+            method:'POST',
+            data:params
+        })
+    },
+    // 手机号修改密码
+    modifyPasswordByPhone(params){
+        return request({
+            url:`${api_path}/modify/password`,
+            method:'POST',
+            data:params
+        })
+    },
     // 用户动态
     getDynamicList(){
         return request({

@@ -172,8 +172,9 @@ export default {
         .then((response) => {
           this.$message.success("提交成功");
           // 更新用户状态
-          this.userInfo.authStatus = 2;
-          this.$store.commit("setUser", this.userInfo);
+          let user = store.state.user;
+          user.authStatus = 2;
+          this.$store.commit("setUser", user);
           window.location.reload();
         })
         .catch((e) => {

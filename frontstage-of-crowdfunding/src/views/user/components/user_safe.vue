@@ -49,7 +49,7 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="type == 'phone1'" label="手机号" prop="phone">
+        <el-form-item v-if="type == 'phone1'" readonly label="手机号" prop="phone">
           <el-input v-model="ruleForm.phone"></el-input>
         </el-form-item>
         <el-form-item v-if="type == 'phone1'" label="验证码" prop="code">
@@ -168,6 +168,7 @@ export default {
       ruleForm: {
         newPassword: "",
         checkPass: "",
+        phone:this.$store.state.phone
       },
       codeTest: "获取验证码",
       rules: {

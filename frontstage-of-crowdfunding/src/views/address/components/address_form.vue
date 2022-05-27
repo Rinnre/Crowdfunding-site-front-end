@@ -1,67 +1,50 @@
 <template>
   <div class="">
     <el-form
-      :model="addAdminInfo"
+      :model="shoppingAddress"
       :rules="rules"
-      ref="addAdminInfo"
+      ref="shoppingAddress"
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="登录账号" prop="loginAcct">
-        <el-input
-          v-model="addAdminInfo.loginAcct"
-          :disabled="disabled"
-        ></el-input>
+      <el-form-item label="收货人姓名" prop="consigneeName">
+        <el-input v-model="shoppingAddress.consigneeName"></el-input>
       </el-form-item>
 
-      <el-form-item label="用户昵称" prop="nickName">
-        <el-input v-model="addAdminInfo.nickName"></el-input>
-      </el-form-item>
-
-      <el-form-item
-        label="登录密码"
-        prop="password"
-        v-if="null == addAdminInfo.id"
-      >
+      <el-form-item label="收货人手机号" prop="consigneePhone">
         <el-input
-          type="password"
-          v-model="addAdminInfo.password"
+          v-model="shoppingAddress.consigneePhone"
           auto-complete="off"
         ></el-input>
       </el-form-item>
 
-      <el-form-item
-        label="确认密码"
-        prop="checkPassword"
-        v-if="null == addAdminInfo.id"
-      >
+      <el-form-item label="收货地址" prop="consigneeAddress">
         <el-input
-          type="password"
-          v-model="addAdminInfo.checkPassword"
+          v-model="shoppingAddress.consigneeAddress"
           auto-complete="off"
         ></el-input>
       </el-form-item>
 
-      <el-form-item label="电子邮箱" prop="email">
-        <el-input v-model="addAdminInfo.email"></el-input>
+      <el-form-item label="电子邮箱" prop="consigneeEmail">
+        <el-input v-model="shoppingAddress.consigneeEmail"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
-          @click="submitForm('addAdminInfo')"
-          v-if="null == addAdminInfo.id"
+          @click="submitForm('shoppingAddress')"
+          v-if="null == address.id"
           >创建</el-button
         >
         <el-button
           type="danger"
-          @click="resetForm('addAdminInfo')"
-          v-if="null == addAdminInfo.id"
+          @click="resetForm('shoppingAddress')"
+          v-if="null == address.id"
           >重置</el-button
         >
         <el-button
           type="primary"
-          @click="saveForm('addAdminInfo')"
-          v-if="null != addAdminInfo.id"
+          @click="saveForm('shoppingAddress')"
+          v-if="null != address.id"
           >保存</el-button
         >
       </el-form-item>
@@ -70,16 +53,98 @@
 </template>
 
 <script>
+import user from "@/api/user";
 export default {
-  name: "",
+  name: "AddressForm",
   props: {
-    adminInfo: {
+    address: {
       type: Object,
       default: {},
     },
   },
-  date() {
-    return {};
+  watch: {
+    address(val) {
+      this.shoppingAddress = this.address;
+      this.resetForm("shoppingAddress");
+    },
+  },
+  data() {
+    var validatePhone = (rule, value, callback) => {
+      var reg = /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
+      console.log(value);
+      if (value === "" || value == null) {
+        callback(new Error("请输入手机号"));
+      } else if (!reg.test(value)) {
+        callback(new Error("非法的手机号"));
+      } else {
+        callback();
+      }
+    };
+    // 自定义邮箱验证规则
+    var validateEmail = (rule, value, callback) => {
+      var reg =
+        /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
+      //  console.log(reg.test(value))
+      if (value === "" || null == value) {
+        callback(new Error("请输入邮箱"));
+      } else if (!reg.test(value)) {
+        callback(new Error("请输入正确格式的邮箱,例如xxxxx@xx.com"));
+      } else {
+        callback();
+      }
+    };
+    return {
+      shoppingAddress: this.address,
+      rules: {
+        consigneeName: [
+          { required: true, message: "请输入收货人姓名", trigger: "blur" },
+        ],
+        consigneePhone: [
+          { required: true, validator: validatePhone, trigger: "blur" },
+        ],
+        consigneeAddress: [
+          { required: true, message: "请输入收货地址", trigger: "blur" },
+        ],
+        consigneeEmail: [
+          { required: true, validator: validateEmail, trigger: "blur" },
+        ],
+      },
+    };
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          user.saveUserAddress(this.shoppingAddress).then((res) => {
+            this.$message.success("添加成功！");
+            // 关闭弹出层，更新数据
+            this.$emit("handleClose");
+            this.shoppingAddress = {};
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    saveForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          user.modifyUserAddress(this.shoppingAddress).then((res) => {
+            this.$message.success("保存成功！");
+            // 关闭弹出层，更新数据
+            this.$emit("handleClose");
+            this.shoppingAddress = {};
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
   },
 };
 </script>

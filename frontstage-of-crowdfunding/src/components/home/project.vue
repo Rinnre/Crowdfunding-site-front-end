@@ -1,43 +1,47 @@
 <template>
   <div class="project_mian">
     <el-card :body-style="{ padding: '0px' }" shadow="hover">
-      <router-link to="/project/detail/123">
-        <img
-          src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-          class="image"
-        />
+      <router-link :to="'/project/detail/'+project.id">
+        <img :src="project.headPicture" class="image" />
       </router-link>
       <div style="padding: 14px">
-        <router-link to="/project/detail/123">
+        <router-link :to="'/project/detail/'+project.id">
           <h3 class="pro_title">
-            人体解剖手稿 酷燃特装书盒！可收纳！可装饰！会发光！
+            {{ project.title }}
           </h3>
         </router-link>
         <div class="author">
           <div
             class="au_logo"
-            style="
-              background: url(https://p6.moimg.net/ico/2019/07/16/20190716_1563258148_5908.jpg?imageMogr2/auto-orient/strip)
-                no-repeat center center;
-              background-size: cover;
-            "
+            :style="{
+              background:
+                'url(' +
+                project.simpleUserVo.avatar +
+                ') no-repeat center center',
+              'background-size': 'cover',
+            }"
           ></div>
-          <p>中信出版集团</p>
+          <p>{{ project.simpleUserVo.nickName }}</p>
         </div>
         <div class="progress_bar">
           <el-progress
             :text-inside="true"
             :stroke-width="20"
-            :percentage="10"
+            :percentage="project.percentage"
             status="exception"
           ></el-progress>
         </div>
         <div class="pro_bottom">
           <div class="left">
-            <p class="status_title">¥<span>21.3万</span></p>
+            <p class="status_title">
+              ¥<span>{{ project.supportMoney }}</span>
+            </p>
           </div>
           <div class="right">
-            <p class="gray_ex"><span backer_count="120136">532</span> 支持者</p>
+            <p class="gray_ex">
+              <span backer_count="120136">{{ project.supporterNumber }}</span>
+              支持者
+            </p>
           </div>
         </div>
       </div>
@@ -48,6 +52,15 @@
 <script>
 export default {
   name: "",
+  props: {
+    project: {
+      type: Object,
+      default: {},
+    },
+  },
+  created() {
+    console.log(this.project);
+  },
   data() {
     return {
       currentDate: new Date(),

@@ -2,46 +2,27 @@
   <div class="reward_body">
     <h3 class="reward_title">
       <div class="head">
-        <span>¥329</span>
-        <em class="count">已抢光／限 200 份</em>
+        <span>¥{{rewardItem.supportMoney}}</span>
+        <em class="count">已抢光／限 {{rewardItem.limitNumber}} 份</em>
       </div>
       <div class="sub_head">
-        <span>限量</span>
-        <span>每人限 1 份</span>
+        <span v-if="rewardItem.limitNumber!=-1">限量</span>
+        <span v-if="rewardItem.limitBuy!=0">每人限 1 份</span>
       </div>
     </h3>
     <div class="reward_content">
       <el-collapse v-model="activeNames" @change="handleChange">
-        <el-collapse-item title="珍藏书标准档" name="1">
+        <el-collapse-item :title="rewardItem.title" name="1">
           <div class="reward_detail">
             <p>
-              ①《江户狂歌》众筹特装珍藏书<br />
-              （金属徽章镶嵌+刷边+亲签）<br />
-              ②超大高清拉页6张（配卷筒）<br />
-              ③百变书衣3个<br />
-              ④档位解锁福利<br />
-              注：此特装版本众筹结束即绝版
+              {{rewardItem.description}}
             </p>
           </div>
           <div class="reward_img_list">
-            <div class="reward_img">
+            <div class="reward_img" v-for="rewardPicture in rewardItem.pictureVos" :key="rewardPicture.id">
               <img
                 class="lazy"
-                src="https://p6.moimg.net/path/dst_project/202204/1316/4101/220413410135xwQ9lBMkARzkbd4OyYG1e4OnDrWN.jpg"
-                style="width: 100%; display: block"
-              />
-            </div>
-            <div class="reward_img">
-              <img
-                class="lazy"
-                src="https://p6.moimg.net/path/dst_project/202204/1316/4101/220413410135xwQ9lBMkARzkbd4OyYG1e4OnDrWN.jpg"
-                style="width: 100%; display: block"
-              />
-            </div>
-            <div class="reward_img">
-              <img
-                class="lazy"
-                src="https://p6.moimg.net/path/dst_project/202204/1316/4101/220413410135xwQ9lBMkARzkbd4OyYG1e4OnDrWN.jpg"
+                :src="rewardPicture.picturePath"
                 style="width: 100%; display: block"
               />
             </div>
@@ -60,6 +41,12 @@
 <script>
 export default {
   name: "Reward",
+  props: {
+    rewardItem: {
+      type: Object,
+      default: {},
+    },
+  },
   data() {
     return {
       activeNames: ["1"],
@@ -157,19 +144,19 @@ em {
   margin-top: 140px;
 }
 
-.reward_content /deep/  .btn {
-    width: 120px;
-    height: 40px;
-    line-height: 36px;
-    display: block;
-    background-color: #00cba6;
-    font-size: 16px;
-    font-weight: 500;
-    color: #ffffff;
-    text-align: center;
-    margin-top: 16px;
-    outline: none;
-    border: 0;
-    cursor: pointer;
+.reward_content /deep/ .btn {
+  width: 120px;
+  height: 40px;
+  line-height: 36px;
+  display: block;
+  background-color: #00cba6;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  text-align: center;
+  margin-top: 16px;
+  outline: none;
+  border: 0;
+  cursor: pointer;
 }
 </style>

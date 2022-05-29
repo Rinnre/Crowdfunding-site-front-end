@@ -21,23 +21,20 @@
         <div class="pro_nav clearfix">
           <h3>在线项目</h3>
           <ul class="nav_lists"></ul>
-          <a
-            target="_blank"
-            href="https://zhongchou.modian.com?_mpos=h_czpro_all"
-            class="more"
+          <a target="_blank" href="#/project/list" class="more"
             >查看更多 <i class="iconfont icon-nestmore"></i
           ></a>
         </div>
         <!--项目卡-->
         <ul class="pro_ul clearfix">
-          <li v-for="index in 8" :key="index">
-            <project></project>
+          <li v-for="project in projectList" :key="project.id">
+            <project :project="project"></project>
           </li>
         </ul>
       </div>
     </div>
     <div class="footer">
-       <el-divider></el-divider>
+      <el-divider></el-divider>
     </div>
   </div>
 </template>
@@ -46,6 +43,7 @@
 import banner from "@/views/home/components/banner";
 import navigation from "@/components/header/navigation";
 import project from "@/components/home/project";
+import projectApi from "@/api/project";
 
 export default {
   name: "Home",
@@ -55,7 +53,22 @@ export default {
     project: project,
   },
   data() {
-    return {};
+    return {
+      projectList: [],
+      page: 1,
+      size:8,
+    };
+  },
+  created() {
+    this.initProjectList();
+  },
+  methods: {
+    initProjectList() {
+      projectApi.getSimpleProjectList(this.page,this.size).then((response) => {
+        this.projectList = response.data.records;
+        console.log(this.projectList);
+      });
+    },
   },
 };
 </script>

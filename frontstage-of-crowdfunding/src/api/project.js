@@ -49,5 +49,20 @@ export default {
             method: 'POST',
             data:project
         })
+    },
+    // 查询项目列表
+    getSimpleProjectList(page,size,searchProject){
+        return request({
+            url:`${api_path}/get/simple/project/info/list/${page}/${size}`,
+            method:'POST',
+            data:searchProject
+        })
+    },
+    // 查询项目详情
+    getProjectDetail(project_id){
+        return request({
+            url: `${api_path}/get/project/detail/${project_id}`,
+            method:'GET',
+        })
     }
 }

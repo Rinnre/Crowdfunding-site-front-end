@@ -5,14 +5,14 @@
       <div class="head_box clearfix">
         <div class="head_left">
           <h3 class="title">
-            <span>《江户狂歌》浮世绘艺术300年——艺术珍藏书第二部</span>
+            <span>{{project.title}}</span>
           </h3>
           <div class="head_picture">
             <img
               id="big_logo"
               width="100%"
               height="518"
-              src="http://p6.moimg.net/path/dst_other/202205/1611/3508/2205163508YkGQO6PwR7jmzqZkJxvV9D0J5Lno34.gif"
+              :src="project.headPicture"
               alt=""
             />
           </div>
@@ -20,7 +20,7 @@
         <div class="head_right">
           <div class="sponsor">
             <div class="sponsor_info">
-              <span class="sponsor_name clearfix">创嘉文化</span>
+              <span class="sponsor_name clearfix">{{project.sponsor.nickName}}</span>
               <p
                 style="
                   margin-top: 7px;
@@ -30,24 +30,24 @@
                   color: #7a8087;
                 "
               >
-                等2人发起项目
+                
               </p>
               <div class="authen">
                 <div class="realname person"></div>
               </div>
               <p class="project_tag clearfix">
                 <i class="iconfont icon-tag"></i>
-                项目类别：出版
+                项目类别：{{project.type}}
               </p>
             </div>
 
             <a
-              href="https://me.modian.com/u/detail?uid=7572636"
+              href=""
               target="_blank"
               class="avater"
               ><img
                 onerror="javascript:this.src='https://s.moimg.net/img/web4-0/default_profile@3x.png'"
-                src="https://p6.moimg.net/path/dst_avatar/202105/1312/5847/2105135847Wkaq1RpbPOx0vOM4jyK7QnA8w9eYVr.mp4" /><span
+                :src="project.sponsor.avatar" /><span
                 class="blue-v"
               ></span
             ></a>
@@ -56,17 +56,17 @@
             <div class="project_info">
               <!-- 众筹目标 -->
               <div class="project_goal">
-                <h3>已筹¥<span>1,161,169.54</span></h3>
+                <h3>已筹¥<span>{{project.supportMoney}}</span></h3>
                 <p class="progress">
                   <el-progress
                     :text-inside="true"
                     :stroke-width="22"
-                    :percentage="80"
+                    :percentage="10"
                     status="exception"
                   ></el-progress>
                 </p>
                 <p style="line-height: 16px; margin-top: 18px">
-                  <span class="goal-money">目标金额 ¥29,999</span>
+                  <span class="goal-money">目标金额 ¥{{project.targetMoney}}</span>
                 </p>
               </div>
               <!-- 剩余时间 -->
@@ -76,7 +76,7 @@
               </div>
               <!-- 支持人数-->
               <div class="support_people" style="margin-top: 30px">
-                <h3><span>2028</span>人</h3>
+                <h3><span>{{project.supporterNumber}}</span>人</h3>
                 <p style="margin-top: 9px">支持人数</p>
               </div>
             </div>
@@ -87,8 +87,8 @@
                 ><i class="iconfont icon-money"></i> 立即购买支持</a
               >
               <el-dialog :visible.sync="dialogTableVisible">
-                <li v-for="index in 3" :key="index" style="margin-bottom: 30px">
-                  <reward></reward>
+                <li v-for="rewardItem in project.rewardVos" :key="rewardItem.id" style="margin-bottom: 30px">
+                  <reward :rewardItem="rewardItem"></reward>
                 </li>
               </el-dialog>
               <a
@@ -107,14 +107,15 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="项目详情" name="first">
             <div id="cont_match_htmlstr" class="content-wrap html-from-editor">
-              <p>
+              <p v-for="projectDetail in project.projectDetailVos" :key="projectDetail.id">
                 <img
                   class="editor"
-                  src="https://p6.moimg.net/path/dst_project/202203/1810/4358/22031843588R7OwWrLPJm0zgPXkgvonZY5MQNVjg.jpg?x-oss-process=image/resize,w_1380,h_3772,m_lfit/quality,Q_80/auto-orient,1/sharpen,100"
+                  :src="projectDetail.picturePath"
                   width="690"
                   height="1886"
                 />
               </p>
+              
             </div>
           </el-tab-pane>
           <el-tab-pane label="项目评论" name="second">
@@ -155,8 +156,8 @@
           </el-collapse>
         </div>
         <div class="reward_list">
-          <li v-for="index in 3" :key="index" style="margin-bottom: 30px">
-            <reward></reward>
+          <li v-for="rewardItem in project.rewardVos" :key="rewardItem.id" style="margin-bottom: 30px">
+            <reward :rewardItem="rewardItem"></reward>
           </li>
         </div>
       </div>
@@ -168,7 +169,7 @@
 import navigation from "@/components/header/navigation";
 import reward from "@/views/project/components/reward";
 import comment from "@/components/comment"
-
+import project from "@/api/project"
 export default {
   name: "projectDetail",
   components: {
@@ -181,10 +182,23 @@ export default {
       activeName: "first",
       activeNames: ["1"],
       dialogTableVisible: false,
+      projectId:"",
+      project:{}
     };
+  },
+  created() {
+    this.projectId = this.$route.params.id
+    this.initProject();
   },
   methods: {
     handleChange() {},
+    initProject(){
+      project.getProjectDetail(this.projectId)
+          .then(response =>{
+            this.project = response.data;
+            console.log(response.data)
+          })
+    }
   },
 };
 </script>

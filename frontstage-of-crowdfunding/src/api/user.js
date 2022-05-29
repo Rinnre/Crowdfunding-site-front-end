@@ -117,10 +117,25 @@ export default {
         })
     },
     // 删除用户收货地址
-    removeUserAddress(addressId){
+    removeUserAddress(addressId) {
         return request({
-            url:`${api_path}/remove/shipping/address/${addressId}`,
-            method:'DELETE'
+            url: `${api_path}/remove/shipping/address/${addressId}`,
+            method: 'DELETE'
+        })
+    },
+
+    // 用户项目管理
+    getUserProject() {
+        return request({
+            url: `${api_path}/get/user/project`,
+            method: 'GET',
+        })
+    },
+    // 用户项目删除
+    removeUserProject(projectId) {
+        return request({
+            url: `${api_path}/remove/project/${projectId}`,
+            method: 'DELETE',
         })
     }
 }

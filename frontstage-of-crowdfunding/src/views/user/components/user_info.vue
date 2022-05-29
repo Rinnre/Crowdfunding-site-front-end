@@ -160,7 +160,7 @@ export default {
         this.imagecropperShow = true;
       }
     },
-    // 讲师头像上传成功后的回调函数
+    // 头像上传成功后的回调函数
     cropSuccess(data) {
       this.imagecropperShow = false;
       // 上传成功后，重新打开上传组件时初始化组件，否则显示上一次的上传结果

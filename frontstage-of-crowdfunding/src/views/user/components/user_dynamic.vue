@@ -161,9 +161,9 @@ export default {
           duration: 1500,
         });
 
+        // 数据清空
+        this.dynamic = {};
         setTimeout(function () {
-          // 数据清空
-          this.dynamic = {};
           // 刷新页面
           location.reload();
         }, 500);

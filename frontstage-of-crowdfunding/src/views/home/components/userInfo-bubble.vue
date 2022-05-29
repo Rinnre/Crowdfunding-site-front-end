@@ -6,7 +6,7 @@
     <div class="bubbleBox">
       <div class="bubbleCon">
         <div id="userInfoBox" class="userInfoBox" style="height: 380px">
-          <router-link id="personalInfo" to="/user_index">
+          <router-link id="personalInfo" to="/user/index">
             <span class="infoImg"
               ><img
                 :src="userInfo.avatar"
@@ -16,37 +16,21 @@
             <h3 class="personalId">{{ userInfo.nickName }}</h3>
           </router-link>
           <div class="userProject"></div>
-          <input type="hidden" id="hover" name="hover" value="2" /><input
-            type="hidden"
-            id="ajax_url"
-            name="ajax_url"
-            value="https://me.modian.com"
-          /><input
-            type="hidden"
-            id="zhongchou_url"
-            name="zhongchou_url"
-            value="https://zhongchou.modian.com"
-          /><input
-            type="hidden"
-            id="static_url"
-            name="static_url"
-            value="https://s.moimg.net/"
-          />
           <div class="userVote"></div>
           <div class="state-set clearfix">
             <div class="userState fl">
               <h3>个人动态</h3>
               <a
                 class="proList ga_fav_pro"
-                href="https://me.modian.com/u/favor?_mpos=h_nav_user"
+                href="#/user/pro_optimistic"
                 >关注的项目</a
               ><a
                 class="proList ga_my_order"
-                href="https://me.modian.com/order/index?_mpos=h_nav_user"
+                href="#/user/order"
                 >我的订单</a
               ><a
                 class="proList ga_launch_pro"
-                href="https://me.modian.com/u/create?_mpos=h_nav_user"
+                href="#/user/project"
                 >发起的项目</a
               >
             </div>
@@ -54,15 +38,15 @@
               <h3>我的设置</h3>
               <a
                 class="proList ga_manage_per_infor"
-                href="https://me.modian.com/u/info?_mpos=h_nav_user"
+                href="#/user/info"
                 >管理个人信息</a
               ><a
                 class="proList ga_manage_address"
-                href="https://me.modian.com/u/delivery_address?_mpos=h_nav_user"
+                href="#/user/address"
                 >管理地址薄</a
               ><a
                 class="proList last"
-                href="https://me.modian.com/u/safe?_mpos=h_nav_user"
+                href="#/user/safe"
                 >账户安全</a
               >
             </div>

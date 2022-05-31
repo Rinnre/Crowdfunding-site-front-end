@@ -3,7 +3,7 @@
     <navigation></navigation>
     <div class="pay_step_back">
       <div class="pay_step">
-        <el-steps :active="1" finish-status="success">
+        <el-steps :active="0" finish-status="success">
           <el-step title="步骤 1 " description="提交订单"></el-step>
           <el-step title="步骤 2 " description="确认支付"></el-step>
           <el-step title="步骤 3 " description="支付成功"></el-step>
@@ -18,9 +18,11 @@
         <div class="send" style="line-height: 34px">寄送至</div>
         <div class="address_filed" style="margin-top: 70px">
           <div class="add_chosen">
-            <span class="add_name">王晋</span
-            ><span class="add_address">湖南省株洲市醴陵市栗山坝镇冷水小学</span
-            ><span class="add_phone">15570756116</span>
+            <span class="add_name">{{ order.address.consigneeName }}</span
+            ><span class="add_address">{{
+              order.address.consigneeAddress
+            }}</span
+            ><span class="add_phone">{{ order.address.consigneePhone }}</span>
 
             <span
               class="change_address fr"
@@ -31,7 +33,11 @@
           </div>
         </div>
         <div v-if="dialogTableVisible" class="modify_address">
-          <addressInfo></addressInfo>
+          <addressInfo
+            :type="'order'"
+            :userAddressList="orderInfo.userAddress"
+            @modifyUserAddress="modifyUserAddress"
+          ></addressInfo>
         </div>
       </div>
     </div>
@@ -42,41 +48,52 @@
           <p class="order_title">确认订单信息:</p>
           <div class="order_left_list order_price">
             <div class="le">回报档</div>
-            <div class="ri">￥16.8 (标准·单副)</div>
+            <div class="ri">
+              ￥{{ orderInfo.reward.supportMoney }} ({{
+                orderInfo.reward.title
+              }})
+            </div>
           </div>
           <div class="order_left_list order_count">
             <div class="le">购买数量</div>
             <div class="ri">
               <div>
-                <span class="left" @click="purchaseCount--"></span>
+                <span
+                  :class="{ left: true, active: order.rewardCount > 1 }"
+                  @click="order.rewardCount--"
+                ></span>
                 <span class="center"
-                  ><input type="text" v-model="purchaseCount"
+                  ><input type="text" v-model="order.rewardCount"
                 /></span>
-                <span class="right active" @click="purchaseCount++"></span>
+                <span
+                  :class="{
+                    right: true,
+                    active:
+                      order.rewardCount < orderInfo.reward.inventoryNumber,
+                  }"
+                  @click="order.rewardCount++"
+                ></span>
               </div>
             </div>
           </div>
           <div class="order_left_list">
             <div class="le">运费</div>
-            <div class="ri postage_money">包邮</div>
+            <div class="ri postage_money">
+              {{ orderInfo.reward.extendMoney }}
+            </div>
           </div>
           <div class="order_left_list">
             <div class="le">档位内容</div>
             <div class="ri">
               <p>
-                ①《江户狂歌》众筹特装珍藏书<br />
-                （金属徽章镶嵌+刷边+亲签）<br />
-                ②超大高清拉页6张（配卷筒）<br />
-                ③百变书衣3个<br />
-                ④档位解锁福利<br />
-                注：此特装版本众筹结束即绝版
+                {{ orderInfo.reward.description }}
               </p>
             </div>
           </div>
         </div>
         <div class="order_info_right">
           <div>
-            <p>33.6</p>
+            <p>{{ order.orderAmount }}</p>
             <p>实际支付金额</p>
           </div>
         </div>
@@ -88,7 +105,7 @@
         <div class="pay_type_title">选择支付方式：</div>
         <div class="pay_type_list">
           <el-radio v-model="radio" label="1">支付宝</el-radio>
-          <el-radio v-model="radio" label="2">其他</el-radio>
+          <el-radio v-if="false" v-model="radio" label="2">其他</el-radio>
         </div>
       </div>
     </div>
@@ -99,19 +116,19 @@
         <div class="right">
           <p style="margin-bottom: 24px">
             1.点击“确认支付”，即表明您已阅读并同意
-            <a target="_blank" href="#">《支持者协议》</a>
-            及<a href="#" target="_blank">《隐私权政策》</a
+            <a target="_blank" href="">《支持者协议》</a>
+            及<a href="" target="_blank">《隐私权政策》</a
             >，并自愿承担众筹相应风险。
           </p>
           <p style="margin-bottom: 24px">
-            2.您参与众筹是支持将创意变为现实的过程，而不是直接的商品交易，因此存在一定风险。请您根据自己的判断选择、支持众筹项目。众筹存在于发起人与支持者之间，摩点网作为第三方平台，只提供网络空间、技术支持等服务。众筹的回报产品和承诺由发起人提供和作出，发起者和支持者应依法承担使用摩点产品产生的法律后果。
+            2.您参与众筹是支持将创意变为现实的过程，而不是直接的商品交易，因此存在一定风险。请您根据自己的判断选择、支持众筹项目。众筹存在于发起人与支持者之间，网站作为第三方平台，只提供网络空间、技术支持等服务。众筹的回报产品和承诺由发起人提供和作出，发起者和支持者应依法承担使用摩点产品产生的法律后果。
           </p>
           <p style="margin-bottom: 24px">
             3.众筹项目的回报发放及其他后续服务事项均由发起人负责。如果发生发起人无法发放回报、延迟发放回报、不提供回报后续服务等情形，您需要直接和发起人协商解决。
           </p>
           <p>
-            4.由于发起人能力和经验不足、市场风险、法律风险等各种因素，众筹可能失败。对于在众筹期限届满前失败的项目，您支持项目的款项会全部原路退还给您；对于众筹成功的项目，支持者不能通过摩点平台申请退款，若此时支持者因任何原因希望退款，需直接与发起者协商，若发
-            起者同意退款，需直接向支持者退回款项，摩点不会从可结算款项中扣除该部分退款金额。您对项目发起人的无偿支持以及额外打赏，一旦众筹成功将不予退款，但众筹失败的情况除外。
+            4.由于发起人能力和经验不足、市场风险、法律风险等各种因素，众筹可能失败。对于在众筹期限届满前失败的项目，您支持项目的款项会全部原路退还给您；对于众筹成功的项目，支持者不能通过平台申请退款，若此时支持者因任何原因希望退款，需直接与发起者协商，若发
+            起者同意退款，需直接向支持者退回款项，本网站不会从可结算款项中扣除该部分退款金额。您对项目发起人的无偿支持以及额外打赏，一旦众筹成功将不予退款，但众筹失败的情况除外。
           </p>
         </div>
       </div>
@@ -121,7 +138,12 @@
       style="box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 23px 1px"
     >
       <div class="new_paywid">
-        <input type="button" value="提交订单 16.8" class="backbtn" />
+        <input
+          type="button"
+          :value="'提交订单 ' + order.orderAmount"
+          @click="submitOrder()"
+          class="backbtn"
+        />
         <span class="edit_color_txt edit_margleft"
           >请在下单后10分钟内支付，过期将失效</span
         >
@@ -133,6 +155,8 @@
 <script>
 import navigation from "@/components/header/navigation";
 import addressInfo from "@/views/address/user_address";
+import order from "@/api/order";
+
 export default {
   name: "Order",
   components: {
@@ -144,7 +168,68 @@ export default {
       dialogTableVisible: false,
       purchaseCount: 1,
       radio: "1",
+      rewardId: "",
+      orderInfo: {},
+      order: {
+        orderAmount: "",
+        rewardCount: 1,
+        address: {},
+        rewardVo: {},
+      },
+      amount: "",
     };
+  },
+  created() {
+    this.rewardId = this.$route.params.rewordId;
+    this.initOrderInfo();
+  },
+  watch: {
+    "order.rewardCount"(newVal, oldVal) {
+      if (newVal <= 0) {
+        this.$message.error("购买个数不能为零！");
+        this.order.rewardCount = oldVal;
+      }
+      if (newVal > this.orderInfo.reward.inventoryNumber) {
+        this.$message.error("回报份数不足");
+        newVal = oldVal;
+        this.order.rewardCount = oldVal;
+      }
+      this.order.orderAmount = this.orderInfo.reward.supportMoney * newVal;
+    },
+  },
+  methods: {
+    // 初始化订单信息
+    initOrderInfo() {
+      order.getOrderConfirmInfo(this.rewardId).then((res) => {
+        this.orderInfo = res.data;
+        if (this.orderInfo.reward.postage == 1) {
+          this.orderInfo.reward.extendMoney = "包邮";
+        } else {
+          this.orderInfo.reward.extendMoney = "部分地区不包邮";
+        }
+        this.order.orderAmount = res.data.reward.supportMoney;
+        this.order.address = res.data.userAddress[0];
+        this.order.rewardVo = res.data.reward;
+        console.log(this.orderInfo);
+      });
+    },
+    // 更改收货地址
+    modifyUserAddress(address) {
+      this.order.address = address;
+      this.dialogTableVisible = false;
+    },
+    // 生成订单
+    submitOrder() {
+      order.saveOrderInfo(this.order)
+          .then((res) =>{
+            this.$message({
+              type: "success",
+              message:'成功！',
+              duration: 3000
+            })
+            console.log(res.data)
+          })
+    },
   },
 };
 </script>
@@ -447,52 +532,54 @@ export default {
 
 /* pay_button */
 .npay-submit {
-    border-top: 1px solid #d1d1d1;
-    background: #ffffff2b;
-    width: 100%;
-    padding-bottom: 15px;
+  border-top: 1px solid #d1d1d1;
+  background: #ffffff2b;
+  width: 100%;
+  padding-bottom: 15px;
 }
 .npay-submit.fixed {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
 }
 
 .new_paywid {
-    width: 940px;
-    margin: 0 auto;
-    font-size: 0;
+  width: 940px;
+  margin: 0 auto;
+  font-size: 0;
 }
 
 .order-pay .new_paywid .backbtn {
-    font-size: 16px;
-    font-weight: normal;
+  font-size: 16px;
+  font-weight: normal;
 }
 
-.backbtn, .subbtnbig, .btn_org {
-    cursor: pointer;
-    display: inline-block;
-    width: 160px;
-    height: 36px;
-    background: #37cb58;
-    font-size: 18px;
-    color: #fff;
-    text-align: center;
-    line-height: 36px;
-    margin-top: 15px;
-    border-radius: 3px;
-    outline: none;
-    border: none;
-    font-weight: bold;
-    font-family: 'Microsoft YaHei';
+.backbtn,
+.subbtnbig,
+.btn_org {
+  cursor: pointer;
+  display: inline-block;
+  width: 160px;
+  height: 36px;
+  background: #37cb58;
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+  line-height: 36px;
+  margin-top: 15px;
+  border-radius: 3px;
+  outline: none;
+  border: none;
+  font-weight: bold;
+  font-family: "Microsoft YaHei";
 }
 .edit_margleft {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 .edit_color_txt {
-    font-size: 14px;
-    color: #223317;
+  font-size: 14px;
+  color: #223317;
 }
 </style>

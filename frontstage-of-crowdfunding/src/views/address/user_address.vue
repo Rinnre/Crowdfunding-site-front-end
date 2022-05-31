@@ -47,6 +47,13 @@
       >设为默认地址</el-button
     > -->
     <el-button
+      v-if="type=='order'"
+      @click="modifyAddress()"
+      style="float: right; margin: 20px"
+      size="small"
+      >更改</el-button
+    >
+    <el-button
       @click="address = {};dialogVisible = true"
       style="float: right; margin: 20px"
       size="small"
@@ -65,6 +72,10 @@ export default {
       type: Array,
       default: [],
     },
+    type: {
+      type: String,
+      default: ""
+    }
   },
   components: {
     addressForm: addressForm,
@@ -91,6 +102,10 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentRow = val;
+    },
+    // 更改地址
+    modifyAddress(){
+      this.$emit('modifyUserAddress',this.currentRow);
     },
     // 更新数据
     handleClose() {

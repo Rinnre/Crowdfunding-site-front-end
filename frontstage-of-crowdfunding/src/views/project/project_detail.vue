@@ -61,7 +61,7 @@
                   <el-progress
                     :text-inside="true"
                     :stroke-width="22"
-                    :percentage="10"
+                    :percentage="project.supportMoney/project.targetMoney*100"
                     status="exception"
                   ></el-progress>
                 </p>

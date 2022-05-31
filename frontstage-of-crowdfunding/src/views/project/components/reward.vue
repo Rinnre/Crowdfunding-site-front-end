@@ -3,7 +3,9 @@
     <h3 class="reward_title">
       <div class="head">
         <span>¥{{rewardItem.supportMoney}}</span>
-        <em class="count">已抢光／限 {{rewardItem.limitNumber}} 份</em>
+        <em class="count" v-if="rewardItem.inventoryNumber!=0">剩余{{rewardItem.inventoryNumber}}份</em>
+        <em class="count" v-if="rewardItem.inventoryNumber==0">已抢光／限 {{rewardItem.limitNumber}} 份</em>
+        <em class="count" v-if="rewardItem.limitNumber==-1">不限量</em>
       </div>
       <div class="sub_head">
         <span v-if="rewardItem.limitNumber!=-1">限量</span>
@@ -29,7 +31,7 @@
           </div>
 
           <div class="reward-time">预计回报发放时间 2022年07月内</div>
-          <router-link class="btn back-btn" to="/order/123">
+          <router-link v-if="rewardItem.inventoryNumber!=0" class="btn back-btn" :to="'/order/'+rewardItem.id">
             去支持
           </router-link>
         </el-collapse-item>

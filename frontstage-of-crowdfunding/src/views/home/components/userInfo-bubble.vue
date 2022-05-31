@@ -91,6 +91,7 @@ export default {
           type: "success",
           message: "退出登录成功!",
         });
+        this.$router.replace('/#/');
         this.$emit("refreshAndClose");
       });
     },

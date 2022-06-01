@@ -106,6 +106,15 @@ const routes = [
     name: 'order',
     component: () => import('@/views/order')
   },
+  {
+
+    path: '/pay/success',
+    // 设置路由的名称，命名路由。
+    name: 'paySuccess',
+    component: () => import('@/views/result/success')
+  },
+
+  
 ]
 
 const router = new VueRouter({

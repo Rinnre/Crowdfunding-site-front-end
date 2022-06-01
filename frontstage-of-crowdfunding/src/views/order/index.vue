@@ -3,150 +3,184 @@
     <navigation></navigation>
     <div class="pay_step_back">
       <div class="pay_step">
-        <el-steps :active="0" finish-status="success">
+        <el-steps :active="active" finish-status="success">
           <el-step title="步骤 1 " description="提交订单"></el-step>
           <el-step title="步骤 2 " description="确认支付"></el-step>
           <el-step title="步骤 3 " description="支付成功"></el-step>
         </el-steps>
       </div>
     </div>
-    <div class="pay_body">
-      <!-- 收货地址 -->
-      <div class="address">
-        <p class="address_title">填写收货地址：</p>
-        <!-- <div class="address_card_list"></div> -->
-        <div class="send" style="line-height: 34px">寄送至</div>
-        <div class="address_filed" style="margin-top: 70px">
-          <div class="add_chosen">
-            <span class="add_name">{{ order.address.consigneeName }}</span
-            ><span class="add_address">{{
-              order.address.consigneeAddress
-            }}</span
-            ><span class="add_phone">{{ order.address.consigneePhone }}</span>
+    <div v-if="active == 0">
+      <div class="pay_body">
+        <!-- 收货地址 -->
+        <div class="address">
+          <p class="address_title">填写收货地址：</p>
+          <!-- <div class="address_card_list"></div> -->
+          <div class="send" style="line-height: 34px">寄送至</div>
+          <div class="address_filed" style="margin-top: 70px">
+            <div class="add_chosen">
+              <span class="add_name">{{ order.address.consigneeName }}</span
+              ><span class="add_address">{{
+                order.address.consigneeAddress
+              }}</span
+              ><span class="add_phone">{{ order.address.consigneePhone }}</span>
 
-            <span
-              class="change_address fr"
-              @click="dialogTableVisible = !dialogTableVisible"
-              style="margin-left: 101px"
-              >修改地址</span
-            >
-          </div>
-        </div>
-        <div v-if="dialogTableVisible" class="modify_address">
-          <addressInfo
-            :type="'order'"
-            :userAddressList="orderInfo.userAddress"
-            @modifyUserAddress="modifyUserAddress"
-          ></addressInfo>
-        </div>
-      </div>
-    </div>
-    <div class="pay_body">
-      <!-- 确认订单信息 -->
-      <div class="order_info">
-        <div class="order_info_left">
-          <p class="order_title">确认订单信息:</p>
-          <div class="order_left_list order_price">
-            <div class="le">回报档</div>
-            <div class="ri">
-              ￥{{ orderInfo.reward.supportMoney }} ({{
-                orderInfo.reward.title
-              }})
+              <span
+                class="change_address fr"
+                @click="dialogTableVisible = !dialogTableVisible"
+                style="margin-left: 101px"
+                >修改地址</span
+              >
             </div>
           </div>
-          <div class="order_left_list order_count">
-            <div class="le">购买数量</div>
-            <div class="ri">
-              <div>
-                <span
-                  :class="{ left: true, active: order.rewardCount > 1 }"
-                  @click="order.rewardCount--"
-                ></span>
-                <span class="center"
-                  ><input type="text" v-model="order.rewardCount"
-                /></span>
-                <span
-                  :class="{
-                    right: true,
-                    active:
-                      order.rewardCount < orderInfo.reward.inventoryNumber,
-                  }"
-                  @click="order.rewardCount++"
-                ></span>
+          <div v-if="dialogTableVisible" class="modify_address">
+            <addressInfo
+              :type="'order'"
+              :userAddressList="orderInfo.userAddress"
+              @modifyUserAddress="modifyUserAddress"
+            ></addressInfo>
+          </div>
+        </div>
+      </div>
+      <div class="pay_body">
+        <!-- 确认订单信息 -->
+        <div class="order_info">
+          <div class="order_info_left">
+            <p class="order_title">确认订单信息:</p>
+            <div class="order_left_list order_price">
+              <div class="le">回报档</div>
+              <div class="ri">
+                ￥{{ orderInfo.reward.supportMoney }} ({{
+                  orderInfo.reward.title
+                }})
+              </div>
+            </div>
+            <div class="order_left_list order_count">
+              <div class="le">购买数量</div>
+              <div class="ri">
+                <div>
+                  <span
+                    :class="{ left: true, active: order.rewardCount > 1 }"
+                    @click="order.rewardCount--"
+                  ></span>
+                  <span class="center"
+                    ><input type="text" v-model="order.rewardCount"
+                  /></span>
+                  <span
+                    :class="{
+                      right: true,
+                      active:
+                        order.rewardCount < orderInfo.reward.inventoryNumber,
+                    }"
+                    @click="order.rewardCount++"
+                  ></span>
+                </div>
+              </div>
+            </div>
+            <div class="order_left_list">
+              <div class="le">运费</div>
+              <div class="ri postage_money">
+                {{ orderInfo.reward.extendMoney }}
+              </div>
+            </div>
+            <div class="order_left_list">
+              <div class="le">档位内容</div>
+              <div class="ri">
+                <p>
+                  {{ orderInfo.reward.description }}
+                </p>
               </div>
             </div>
           </div>
-          <div class="order_left_list">
-            <div class="le">运费</div>
-            <div class="ri postage_money">
-              {{ orderInfo.reward.extendMoney }}
-            </div>
-          </div>
-          <div class="order_left_list">
-            <div class="le">档位内容</div>
-            <div class="ri">
-              <p>
-                {{ orderInfo.reward.description }}
-              </p>
+          <div class="order_info_right">
+            <div>
+              <p>{{ order.orderAmount }}</p>
+              <p>实际支付金额</p>
             </div>
           </div>
         </div>
-        <div class="order_info_right">
-          <div>
-            <p>{{ order.orderAmount }}</p>
+      </div>
+      <div class="pay_body">
+        <!-- 支付方式 -->
+        <div class="pay_type">
+          <div class="pay_type_title">选择支付方式：</div>
+          <div class="pay_type_list">
+            <el-radio v-model="radio" label="1">支付宝</el-radio>
+            <el-radio v-if="false" v-model="radio" label="2">其他</el-radio>
+          </div>
+        </div>
+      </div>
+      <div class="pay_body">
+        <!-- 免责声明 -->
+        <div class="risk_warning">
+          <div class="left">免责声明：</div>
+          <div class="right">
+            <p style="margin-bottom: 24px">
+              1.点击“确认支付”，即表明您已阅读并同意
+              <a target="_blank" href="">《支持者协议》</a>
+              及<a href="" target="_blank">《隐私权政策》</a
+              >，并自愿承担众筹相应风险。
+            </p>
+            <p style="margin-bottom: 24px">
+              2.您参与众筹是支持将创意变为现实的过程，而不是直接的商品交易，因此存在一定风险。请您根据自己的判断选择、支持众筹项目。众筹存在于发起人与支持者之间，网站作为第三方平台，只提供网络空间、技术支持等服务。众筹的回报产品和承诺由发起人提供和作出，发起者和支持者应依法承担使用摩点产品产生的法律后果。
+            </p>
+            <p style="margin-bottom: 24px">
+              3.众筹项目的回报发放及其他后续服务事项均由发起人负责。如果发生发起人无法发放回报、延迟发放回报、不提供回报后续服务等情形，您需要直接和发起人协商解决。
+            </p>
+            <p>
+              4.由于发起人能力和经验不足、市场风险、法律风险等各种因素，众筹可能失败。对于在众筹期限届满前失败的项目，您支持项目的款项会全部原路退还给您；对于众筹成功的项目，支持者不能通过平台申请退款，若此时支持者因任何原因希望退款，需直接与发起者协商，若发
+              起者同意退款，需直接向支持者退回款项，本网站不会从可结算款项中扣除该部分退款金额。您对项目发起人的无偿支持以及额外打赏，一旦众筹成功将不予退款，但众筹失败的情况除外。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="npay-submit order-pay fixed"
+        style="box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 23px 1px"
+      >
+        <div class="new_paywid">
+          <input
+            type="button"
+            :value="'提交订单 ' + order.orderAmount"
+            @click="submitOrder()"
+            class="backbtn"
+          />
+          <span class="edit_color_txt edit_margleft"
+            >请在下单后10分钟内支付，过期将失效</span
+          >
+        </div>
+      </div>
+    </div>
+    <div v-if="active == 1">
+      <div class="pay_body">
+        <div class="shopping_addrress wechat_pay">
+          <div class="fl">{{ orderInfo.reward.title }}</div>
+          <div class="fr">
+            <p>￥{{ order.orderAmount }}</p>
             <p>实际支付金额</p>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="pay_body">
-      <!-- 支付方式 -->
-      <div class="pay_type">
-        <div class="pay_type_title">选择支付方式：</div>
-        <div class="pay_type_list">
-          <el-radio v-model="radio" label="1">支付宝</el-radio>
-          <el-radio v-if="false" v-model="radio" label="2">其他</el-radio>
+        <el-divider></el-divider>
+        <div class="shopping_addrress">
+          <div class="wechat_pay" style="margin-left: 334px">
+            <payQr :order_id="order.id" @paySuccess="paySuccess"></payQr>
+            <p class="third_code_p" style="margin-left: 46px">支付宝扫码支付</p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="pay_body">
-      <!-- 免责声明 -->
-      <div class="risk_warning">
-        <div class="left">免责声明：</div>
-        <div class="right">
-          <p style="margin-bottom: 24px">
-            1.点击“确认支付”，即表明您已阅读并同意
-            <a target="_blank" href="">《支持者协议》</a>
-            及<a href="" target="_blank">《隐私权政策》</a
-            >，并自愿承担众筹相应风险。
-          </p>
-          <p style="margin-bottom: 24px">
-            2.您参与众筹是支持将创意变为现实的过程，而不是直接的商品交易，因此存在一定风险。请您根据自己的判断选择、支持众筹项目。众筹存在于发起人与支持者之间，网站作为第三方平台，只提供网络空间、技术支持等服务。众筹的回报产品和承诺由发起人提供和作出，发起者和支持者应依法承担使用摩点产品产生的法律后果。
-          </p>
-          <p style="margin-bottom: 24px">
-            3.众筹项目的回报发放及其他后续服务事项均由发起人负责。如果发生发起人无法发放回报、延迟发放回报、不提供回报后续服务等情形，您需要直接和发起人协商解决。
-          </p>
-          <p>
-            4.由于发起人能力和经验不足、市场风险、法律风险等各种因素，众筹可能失败。对于在众筹期限届满前失败的项目，您支持项目的款项会全部原路退还给您；对于众筹成功的项目，支持者不能通过平台申请退款，若此时支持者因任何原因希望退款，需直接与发起者协商，若发
-            起者同意退款，需直接向支持者退回款项，本网站不会从可结算款项中扣除该部分退款金额。您对项目发起人的无偿支持以及额外打赏，一旦众筹成功将不予退款，但众筹失败的情况除外。
-          </p>
-        </div>
-      </div>
-    </div>
-    <div
-      class="npay-submit order-pay fixed"
-      style="box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 23px 1px"
-    >
-      <div class="new_paywid">
-        <input
-          type="button"
-          :value="'提交订单 ' + order.orderAmount"
-          @click="submitOrder()"
-          class="backbtn"
-        />
-        <span class="edit_color_txt edit_margleft"
-          >请在下单后10分钟内支付，过期将失效</span
-        >
+    <div v-if="active == 2">
+      <div class="su">
+          <el-result
+            icon="success"
+            title="支付成功！"
+            subTitle="感谢您对本项目的大力支持"
+          >
+            <template slot="extra">
+              <el-button type="primary" size="medium" @click="backHome()">返回项目详情</el-button>
+            </template>
+          </el-result>
       </div>
     </div>
   </div>
@@ -156,12 +190,14 @@
 import navigation from "@/components/header/navigation";
 import addressInfo from "@/views/address/user_address";
 import order from "@/api/order";
+import payQr from "@/views/pay";
 
 export default {
   name: "Order",
   components: {
     navigation: navigation,
     addressInfo: addressInfo,
+    payQr: payQr,
   },
   data() {
     return {
@@ -169,8 +205,10 @@ export default {
       purchaseCount: 1,
       radio: "1",
       rewardId: "",
+      active: 0,
       orderInfo: {},
       order: {
+        projectId:"",
         orderAmount: "",
         rewardCount: 1,
         address: {},
@@ -207,10 +245,11 @@ export default {
         } else {
           this.orderInfo.reward.extendMoney = "部分地区不包邮";
         }
+        this.order.projectId = res.data.reward.projectId;
         this.order.orderAmount = res.data.reward.supportMoney;
         this.order.address = res.data.userAddress[0];
         this.order.rewardVo = res.data.reward;
-        console.log(this.orderInfo);
+        // console.log(this.orderInfo);
       });
     },
     // 更改收货地址
@@ -220,16 +259,25 @@ export default {
     },
     // 生成订单
     submitOrder() {
-      order.saveOrderInfo(this.order)
-          .then((res) =>{
-            this.$message({
-              type: "success",
-              message:'成功！',
-              duration: 3000
-            })
-            console.log(res.data)
-          })
+      order.saveOrderInfo(this.order).then((res) => {
+        this.order.id = res.data;
+        this.$message({
+          type: "success",
+          message: "成功！",
+          duration: 3000,
+        });
+        this.active++;
+      });
     },
+    // 支付成功回调
+    paySuccess() {
+      this.$message.success("支付成功！");
+      location.reload();
+      this.active=2;
+    },
+    backHome(){
+      this.$router.replace("/#/project/detail/"+ this.orderInfo.reward.projectId);
+    }
   },
 };
 </script>
@@ -581,5 +629,41 @@ export default {
 .edit_color_txt {
   font-size: 14px;
   color: #223317;
+}
+
+.wechat_pay .fl {
+  font-size: 20px;
+  font-weight: bold;
+  color: #223317;
+  width: 636px;
+  line-height: 30px;
+  float: left;
+}
+
+.edit_order_info .order_info_fr p:first-child,
+.wechat_pay .fr p:first-child {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: bold;
+  color: #223318;
+}
+.edit_order_info .order_info_fr p:last-child,
+.wechat_pay .fr p:last-child {
+  font-size: 14px;
+  line-height: 20px;
+  color: #223318;
+  margin-top: 4px;
+}
+.wechat_pay .fr {
+  width: 206px;
+  text-align: center;
+  margin-right: -30px;
+  border-left: 1px solid #e5e5e5;
+  float: right;
+}
+
+.pay_body .shopping_addrress {
+  padding: 40px;
+  position: relative;
 }
 </style>

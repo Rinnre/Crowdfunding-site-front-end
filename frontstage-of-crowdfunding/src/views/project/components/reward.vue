@@ -3,7 +3,7 @@
     <h3 class="reward_title">
       <div class="head">
         <span>¥{{rewardItem.supportMoney}}</span>
-        <em class="count" v-if="rewardItem.inventoryNumber!=0">剩余{{rewardItem.inventoryNumber}}份</em>
+        <em class="count" v-if="rewardItem.inventoryNumber!=0&&rewardItem.limitNumber!=-1">剩余{{rewardItem.inventoryNumber}}份</em>
         <em class="count" v-if="rewardItem.inventoryNumber==0">已抢光／限 {{rewardItem.limitNumber}} 份</em>
         <em class="count" v-if="rewardItem.limitNumber==-1">不限量</em>
       </div>

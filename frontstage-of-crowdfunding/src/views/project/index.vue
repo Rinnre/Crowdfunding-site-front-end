@@ -5,14 +5,15 @@
       <div class="project_head">
         <div class="left">
           <h1>众筹项目</h1>
-          <span>共 227 个众筹项目</span>
+          <span>共 {{projectList.length}} 个众筹项目</span>
         </div>
         <div class="right">
           <ul class="sort_list">
             <li>
               <el-dropdown @command="handleType">
                 <span class="el-dropdown-link">
-                  {{filtration.projectType}}<i class="el-icon-arrow-down el-icon--right"></i>
+                  {{ filtration.projectType
+                  }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="all:全部">全部</el-dropdown-item>
@@ -24,24 +25,36 @@
             <li>
               <el-dropdown @command="handleStatus">
                 <span class="el-dropdown-link">
-                  {{filtration.projectStatus}}<i class="el-icon-arrow-down el-icon--right"></i>
+                  {{ filtration.projectStatus
+                  }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="all:全部">全部</el-dropdown-item>
-                  <el-dropdown-item command="Ongoing:众筹中">众筹中</el-dropdown-item>
-                  <el-dropdown-item command="success:众筹结束">众筹结束</el-dropdown-item>
+                  <el-dropdown-item command="Ongoing:众筹中"
+                    >众筹中</el-dropdown-item
+                  >
+                  <el-dropdown-item command="success:众筹结束"
+                    >众筹结束</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
             <li>
               <el-dropdown @command="handleSortWord">
                 <span class="el-dropdown-link">
-                  {{filtration.projectSort}}<i class="el-icon-arrow-down el-icon--right"></i>
+                  {{ filtration.projectSort
+                  }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="time:最近上线">最近上线</el-dropdown-item>
-                  <el-dropdown-item command="money:金额最高">金额最高</el-dropdown-item>
-                  <el-dropdown-item command="person:支持最多">支持最多</el-dropdown-item>
+                  <el-dropdown-item command="time:最近上线"
+                    >最近上线</el-dropdown-item
+                  >
+                  <el-dropdown-item command="money:金额最高"
+                    >金额最高</el-dropdown-item
+                  >
+                  <el-dropdown-item command="person:支持最多"
+                    >支持最多</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
@@ -50,8 +63,8 @@
       </div>
       <div class="project_filed">
         <ul class="pro_ul clearfix">
-          <li v-for="index in 8" :key="index">
-            <project></project>
+          <li v-for="project in projectList" :key="project.id">
+            <project :project="project"></project>
           </li>
         </ul>
         <div class="page">
@@ -70,6 +83,7 @@
 <script>
 import navigation from "@/components/header/navigation";
 import project from "@/components/home/project";
+import projectApi from "@/api/project";
 
 export default {
   name: "Project",
@@ -84,22 +98,33 @@ export default {
         projectStatus: "众筹中",
         projectSort: "最近上线",
       },
+      projectList: [],
+      page: 1,
+      size: 8,
     };
   },
+  created() {
+    this.initProjectList();
+  },
   methods: {
+    initProjectList() {
+      projectApi.getSimpleProjectList(this.page, this.size).then((response) => {
+        this.projectList = response.data.records;
+        console.log(response.data);
+      });
+    },
     handleType(command) {
       let type = command.split(":")[1];
-      this.filtration.projectType =type;
+      this.filtration.projectType = type;
     },
     handleStatus(command) {
       let status = command.split(":")[1];
-      this.filtration.projectStatus =status;
+      this.filtration.projectStatus = status;
     },
     handleSortWord(command) {
       let sortWord = command.split(":")[1];
-      this.filtration.projectSort =sortWord;
+      this.filtration.projectSort = sortWord;
     },
-
   },
 };
 </script>

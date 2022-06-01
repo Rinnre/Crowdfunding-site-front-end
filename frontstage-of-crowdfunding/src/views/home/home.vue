@@ -66,7 +66,7 @@ export default {
     initProjectList() {
       projectApi.getSimpleProjectList(this.page,this.size).then((response) => {
         this.projectList = response.data.records;
-        console.log(this.projectList);
+        
       });
     },
   },

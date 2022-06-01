@@ -578,6 +578,7 @@
 import navigation from "@/components/header/navigation";
 import ImageCropper from "@/components/ImageCropper";
 import project from "@/api/project";
+
 export default {
   name: "LaunchProject",
   components: {
@@ -585,13 +586,14 @@ export default {
     ImageCropper: ImageCropper,
   },
   created() {
+    this.projectsName =this.$store.state.project;
     if (this.projectsName != "" && this.projectsName != null) {
       this.initProjectInfo();
     }
   },
   data() {
     return {
-      projectsName: "解谜手札",
+      projectsName: "",
       projectInfo: {
         name: "",
         rewardVos: [],
@@ -608,7 +610,7 @@ export default {
       type: "",
       disabled: false,
       dialogVisible: false,
-      active: 4,
+      active: 0,
       updateIndex: "",
       rewardDetail: {
         limitNumber: "",
@@ -744,8 +746,12 @@ export default {
     },
     // 基本信息上传
     submitBaseProject() {
+      if(this.projectsName==this.projectInfo.name){
+        this.next();
+        return;
+      }
       project.saveBaseProject(this.projectInfo).then((response) => {
-        this.projectsName = this.projectInfo.name;
+        this.$store.commit('setProjectName',this.projectInfo.name)
         this.$message.success(response.message);
         this.next();
       });
@@ -845,6 +851,7 @@ export default {
           message: "项目上传成功！将在5秒后跳转至首页!",
           type: "success",
         });
+        this.$store.commit('setProjectName',"");
         let that = this;
         setTimeout(function () {
           that.$router.replace("/#/");

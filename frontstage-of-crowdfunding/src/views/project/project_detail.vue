@@ -119,7 +119,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="项目评论" name="second">
-            <comment></comment>
+            <comment :sourceId="projectId"></comment>
           </el-tab-pane>
         </el-tabs>
       </div>

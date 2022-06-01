@@ -1,25 +1,17 @@
 <template>
   <div class="opus-wrap clearfix">
     <div class="detail-left">
-      <!-- <div class="df-title" id="all_comments">
-        <span class="comment-num"
-          ><i>{{ commentCount }}</i></span
-        >
-        评论
-      </div> -->
       <div class="detail-feedback-wrap">
         <div class="df-ipt-wrap clearfix" id="comment">
-          <div class="feeds-author l">评论</div>
           <div class="textarea-one l">
             <textarea
               v-model="commentForm.content"
-              placeholder="共同学习，写下你的评论"
+              placeholder="在这里发表你的看法"
             ></textarea>
           </div>
           <el-button
             class="reply-btn-one"
-            type="primary"
-            round
+            type="info"
             @click="addComment('0', '0')"
             >评论</el-button
           >
@@ -41,13 +33,13 @@
           <div id="js-feedback-list">
             <div
               v-for="(comment, index) in commentList"
-              v-bind:key="index"
+              :key="index"
               class="comment-box clearfix"
             >
               <div class="comment clearfix">
                 <div class="feed-author l">
                   <a>
-                    <img :src="comment.avatar" width="48" /><span
+                    <img :src="comment.avatar" width="40" /><span
                       class="com-floor"
                       >{{ index + 1 }}楼</span
                     >
@@ -65,15 +57,40 @@
                       >回复</span
                     >
                     <span
-                      v-if="memberId == comment.memberId"
+                      v-if="uid == comment.memberId"
                       class="reply-btn"
                       @click="removeComment(comment.id)"
                       >删除</span
                     >
-                    <span v-else class="reply-btn" @click="toReport(comment.id)"
-                      >举报</span
-                    >
                     <span class="feed-list-times">{{ comment.gmtCreate }}</span>
+                  </div>
+                </div>
+                <div
+                  v-if="commentId == comment.id"
+                  class="release-reply clearfix"
+                >
+                  <a class="user-head">
+                    <img :src="commentForm.avatar" />
+                  </a>
+                  <div class="replay-con l">
+                    <div class="textarea-wrap">
+                      <textarea
+                        v-model="commentForm.replyContent"
+                        placeholder="写下你的回复..."
+                      ></textarea>
+                    </div>
+                    <p class="errtip"></p>
+                    <div class="reply-ctrl clearfix">
+                      <div class="btn-wrap">
+                        <div class="cancel-btn" @click="addReply('')">取消</div>
+                        <div
+                          class="release-reply-btn"
+                          @click="addComment(commentForm.replyId, comment.id)"
+                        >
+                          回复
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -85,7 +102,7 @@
                 >
                   <div class="feed-author l">
                     <a>
-                      <img :src="childrenList.avatar" width="48" />
+                      <img :src="childrenList.avatar" width="40" />
                     </a>
                   </div>
                   <div class="feed-list-content">
@@ -95,51 +112,48 @@
                     <div class="comment-footer clearfix">
                       <span
                         class="reply-btn"
-                        @click="addReply(comment.id, childrenList.id)"
+                        @click="addReply(childrenList.id, childrenList.id)"
                         >回复</span
                       >
                       <span
-                        v-if="memberId == childrenList.memberId"
+                        v-if="uid == childrenList.memberId"
                         class="reply-btn"
                         @click="removeComment(childrenList.id)"
                         >删除</span
                       >
-                      <span
-                        v-else
-                        class="reply-btn"
-                        @click="toReport(childrenList.id)"
-                        >举报</span
-                      >
+
                       <span class="feed-list-times">{{
                         childrenList.gmtCreate
                       }}</span>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div
-                v-if="commentId == comment.id"
-                class="release-reply clearfix"
-              >
-                <a class="user-head">
-                  <img :src="avatar" />
-                </a>
-                <div class="replay-con l">
-                  <div class="textarea-wrap">
-                    <textarea
-                      v-model="commentForm.replyContent"
-                      placeholder="写下你的回复..."
-                    ></textarea>
-                  </div>
-                  <p class="errtip"></p>
-                  <div class="reply-ctrl clearfix">
-                    <div class="btn-wrap">
-                      <div class="cancel-btn" @click="addReply('')">取消</div>
-                      <div
-                        class="release-reply-btn"
-                        @click="addComment(commentForm.replyId, comment.id)"
-                      >
-                        回复
+                  <div
+                    v-if="commentId == childrenList.id"
+                    class="release-reply clearfix"
+                  >
+                    <a class="user-head">
+                      <img :src="commentForm.avatar" />
+                    </a>
+                    <div class="replay-con l">
+                      <div class="textarea-wrap">
+                        <textarea
+                          v-model="commentForm.replyContent"
+                          placeholder="写下你的回复..."
+                        ></textarea>
+                      </div>
+                      <p class="errtip"></p>
+                      <div class="reply-ctrl clearfix">
+                        <div class="btn-wrap">
+                          <div class="cancel-btn" @click="addReply('')">
+                            取消
+                          </div>
+                          <div
+                            class="release-reply-btn"
+                            @click="addComment(commentForm.replyId, comment.id)"
+                          >
+                            回复
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -150,66 +164,15 @@
         </div>
       </div>
     </div>
-    <el-dialog
-      title="举报"
-      :visible.sync="reportDialogVisible"
-      width="500px"
-      @close="clean()"
-    >
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="举报类型">
-          <el-checkbox-group v-model="form.type">
-            <el-checkbox label="广告或垃圾信息" name="type"></el-checkbox>
-            <el-checkbox label="辱骂" name="type"></el-checkbox>
-            <el-checkbox label="涉政或违法" name="type"></el-checkbox>
-            <el-checkbox label="抄袭" name="type"></el-checkbox>
-            <el-checkbox label="不合适内容" name="type"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="举报理由">
-          <el-input
-            type="textarea"
-            placeholder="请输入举报理由"
-            maxlength="150"
-            show-word-limit
-            v-model="form.reason"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="reportDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addReport()">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-// import comment from '@/api/comment'
+import comment from "@/api/comment";
 export default {
   //
   props: {
     sourceId: {
-      type: String,
-      default: "",
-    },
-    sourceType: {
-      type: String,
-      default: "",
-    },
-    memberId: {
-      type: String,
-      default: "",
-    },
-    sourceTitle: {
-      type: String,
-      default: "",
-    },
-    authorId: {
-      type: String,
-      default: "0",
-    },
-    avatar: {
       type: String,
       default: "",
     },
@@ -220,271 +183,65 @@ export default {
       commentForm: {
         parentId: "",
         sourceId: "",
-        sourceType: "",
         content: "",
         replyId: "",
         replyContent: "",
         replyMemberId: "",
-        replyNickname: "",
+        memberId: this.$store.state.user.uid,
+        nickname: this.$store.state.user.nickName,
+        avatar: this.$store.state.user.avatar,
       },
 
       commentId: "",
+      uid: this.$store.state.user.uid,
       //
-      commentVo: {
-        sourceId: "",
-        sourceType: "",
-      },
       // 评论列表
-      commentList: [
-        {
-          id: "1510468317616820226",
-          parentId: "0",
-          sourceType: "course",
-          sourceId: "1501441043374637058",
-          memberId: "1501820738536570881",
-          nickname: "彭浩",
-          avatar:
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIlBiaNaPKczt4mrHTGORt4ic2wCHZgO8kyJaId4Y7Btda36Elm862YYAA8GRuzFx4Vqbj5KEvJficSg/132",
-          content: "测试添加评论功能——Java精品课程",
-          replyId: "0",
-          replyMemberId: null,
-          replyNickname: null,
-          level: 1,
-          children: [
-            {
-              id: "1510482404388114434",
-              parentId: "1510468317616820226",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1501820738536570881",
-              nickname: "彭浩",
-              avatar:
-                "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIlBiaNaPKczt4mrHTGORt4ic2wCHZgO8kyJaId4Y7Btda36Elm862YYAA8GRuzFx4Vqbj5KEvJficSg/132",
-              content: "测试回复评论功能——Java精品课程",
-              replyId: "1510468317616820226",
-              replyMemberId: "1501820738536570881",
-              replyNickname: "彭浩",
-              level: 2,
-              children: null,
-              state: 0,
-              gmtCreate: "2022-04-03 13:00:43",
-            },
-            {
-              id: "1510482958355009537",
-              parentId: "1510468317616820226",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1501820738536570881",
-              nickname: "彭浩",
-              avatar:
-                "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIlBiaNaPKczt4mrHTGORt4ic2wCHZgO8kyJaId4Y7Btda36Elm862YYAA8GRuzFx4Vqbj5KEvJficSg/132",
-              content: "测试回复评论功能——Java精品课程2",
-              replyId: "1510468317616820226",
-              replyMemberId: "1501820738536570881",
-              replyNickname: "彭浩",
-              level: 2,
-              children: null,
-              state: 0,
-              gmtCreate: "2022-04-03 13:02:55",
-            },
-            {
-              id: "1510494370100002818",
-              parentId: "1510468317616820226",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1501820738536570881",
-              nickname: "彭浩",
-              avatar:
-                "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIlBiaNaPKczt4mrHTGORt4ic2wCHZgO8kyJaId4Y7Btda36Elm862YYAA8GRuzFx4Vqbj5KEvJficSg/132",
-              content: "测试回复评论功能——Java精品课程3",
-              replyId: "1510468317616820226",
-              replyMemberId: "1501820738536570881",
-              replyNickname: "彭浩",
-              level: 2,
-              children: null,
-              state: 0,
-              gmtCreate: "2022-04-03 13:48:16",
-            },
-            {
-              id: "1510500646200569857",
-              parentId: "1510468317616820226",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1510498291698728962",
-              nickname: "张三 ",
-              avatar:
-                "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKvyvYrjCqe53yg49Liazd4Ox6aiclVbXxichnF1wpVu6R6EDCIaIJYp4ZfY0Ih7Fq5EgvRNEWVGABdA/132",
-              content: "测试回复评论功能——Java精品课程4",
-              replyId: "1510482404388114434",
-              replyMemberId: "1501820738536570881",
-              replyNickname: "彭浩",
-              level: 2,
-              children: null,
-              state: 1,
-              gmtCreate: "2022-04-03 14:13:12",
-            },
-          ],
-          state: 0,
-          gmtCreate: "2022-04-03 12:04:45",
-        },
-        {
-          id: "1510482128755232769",
-          parentId: "0",
-          sourceType: "course",
-          sourceId: "1501441043374637058",
-          memberId: "1501820738536570881",
-          nickname: "彭浩",
-          avatar:
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIlBiaNaPKczt4mrHTGORt4ic2wCHZgO8kyJaId4Y7Btda36Elm862YYAA8GRuzFx4Vqbj5KEvJficSg/132",
-          content: "测试添加评论功能——Java精品课程2",
-          replyId: "0",
-          replyMemberId: "",
-          replyNickname: "",
-          level: 1,
-          children: [
-            {
-              id: "1510500764081483778",
-              parentId: "1510482128755232769",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1510498291698728962",
-              nickname: "张三 ",
-              avatar:
-                "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKvyvYrjCqe53yg49Liazd4Ox6aiclVbXxichnF1wpVu6R6EDCIaIJYp4ZfY0Ih7Fq5EgvRNEWVGABdA/132",
-              content: "测试添加评论功能——Java精品课程21",
-              replyId: "1510482128755232769",
-              replyMemberId: "1501820738536570881",
-              replyNickname: "彭浩",
-              level: 2,
-              children: null,
-              state: 0,
-              gmtCreate: "2022-04-03 14:13:41",
-            },
-            {
-              id: "1510501397496885250",
-              parentId: "1510482128755232769",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1501820738536570881",
-              nickname: "彭浩",
-              avatar:
-                "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIlBiaNaPKczt4mrHTGORt4ic2wCHZgO8kyJaId4Y7Btda36Elm862YYAA8GRuzFx4Vqbj5KEvJficSg/132",
-              content: "测试添加评论功能——Java精品课程22",
-              replyId: "1510500764081483778",
-              replyMemberId: "1510498291698728962",
-              replyNickname: "Jlinのabysmᵀᴹ",
-              level: 2,
-              children: null,
-              state: 0,
-              gmtCreate: "2022-04-03 14:16:12",
-            },
-            {
-              id: "1522899590960496642",
-              parentId: "1510482128755232769",
-              sourceType: "course",
-              sourceId: "1501441043374637058",
-              memberId: "1510498291698728962",
-              nickname: "张三 ",
-              avatar:
-                "https://guli-edu-ph.oss-cn-beijing.aliyuncs.com/avatar/2022/05/25e73b00c8dc4370827c17dd64b2e2dc.png",
-              content: "测试数据提醒——回复评论（课程）",
-              replyId: "1510482128755232769",
-              replyMemberId: "1501820738536570881",
-              replyNickname: "彭浩",
-              level: 2,
-              children: null,
-              state: 0,
-              gmtCreate: "2022-05-07 19:22:11",
-            },
-          ],
-          state: 0,
-          gmtCreate: "2022-04-03 12:59:38",
-        },
-        {
-          id: "1522899545544572930",
-          parentId: "0",
-          sourceType: "course",
-          sourceId: "1501441043374637058",
-          memberId: "1510498291698728962",
-          nickname: "张三 ",
-          avatar:
-            "https://guli-edu-ph.oss-cn-beijing.aliyuncs.com/avatar/2022/05/25e73b00c8dc4370827c17dd64b2e2dc.png",
-          content: "测试数据提醒——发布评论（课程）",
-          replyId: "0",
-          replyMemberId: null,
-          replyNickname: null,
-          level: 1,
-          children: [],
-          state: 0,
-          gmtCreate: "2022-05-07 19:22:00",
-        },
-      ],
+      commentList: [],
       commentCount: 0,
-      reportDialogVisible: false,
-      // 举报
-      form: {
-        commentId: "",
-        type: [],
-        reason: "",
-      },
     };
   },
   created() {
-    this.defaultForm = JSON.parse(JSON.stringify(this.form));
-    this.defaultCommentForm = JSON.parse(JSON.stringify(this.commentForm));
-    this.getCommentList();
+    this.initCommentList();
   },
   methods: {
-    getCommentList() {
-      this.commentVo.sourceId = this.sourceId;
-      this.commentVo.sourceType = this.sourceType;
-      comment.getCommentList(this.commentVo).then((response) => {
-        if (response.data.success === true) {
-          this.commentList = response.data.data.commentList;
-          this.commentCount = response.data.data.count;
-          this.toParent();
-        }
+    // 获取评论列表
+    initCommentList() {
+      comment.getCommentsByProjectId(this.sourceId).then((response) => {
+        console.log(response);
+        this.commentList = response.data.commentList;
       });
     },
-    toParent() {
-      this.$emit("fromChild", this.commentCount);
-    },
+    // 发布评论
+
     addComment(replyId, parentId) {
+      // 收集数据
       this.commentForm.replyId = replyId;
       this.commentForm.parentId = parentId;
       this.commentForm.sourceId = this.sourceId;
-      this.commentForm.sourceType = this.sourceType;
-      this.commentForm.sourceTitle = this.sourceTitle;
-      this.commentForm.authorId = this.authorId;
+
       this.commentForm.content =
         this.commentForm.content === ""
           ? this.commentForm.replyContent
           : this.commentForm.content;
-      comment.addComment(this.commentForm).then((response) => {
-        if (response.data.success === true) {
-          this.getCommentList();
-          this.clean();
+
+      comment.addCommentToProject(this.commentForm).then((response) => {
+        if (response.success === true) {
+          this.$message.success(response.message);
+          this.initCommentList();
+          this.commentForm = {};
+          this.commentForm.content = "";
+          this.commentForm.memberId = this.$store.state.user.uid;
+          this.commentForm.nickname = this.$store.state.user.nickName;
+          this.commentForm.avatar = this.$store.state.user.avatar;
+          this.commentId="";
         }
       });
-    },
-    clean() {
-      this.form = JSON.parse(JSON.stringify(this.defaultForm)); // 重置
-      this.commentForm = JSON.parse(JSON.stringify(this.defaultCommentForm)); // 重置
-      this.commentId = "";
     },
     addReply(commentId, replyId) {
       this.commentId = commentId;
       this.commentForm.replyId = replyId;
     },
-    toReport(commentId) {
-      this.form.commentId = commentId;
-      this.reportDialogVisible = true;
-    },
-    addReport() {
-      this.form.type = JSON.stringify(this.form.type);
-      comment.addReport(this.form);
-      this.reportDialogVisible = false;
-    },
+    // 删除评论
     removeComment(commentId) {
       this.$confirm("此操作将永久删除该评论，是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -492,19 +249,15 @@ export default {
         type: "warning",
       })
         .then(() => {
-          return comment.removeComment(commentId);
+          comment.removeCommentById(commentId).then((res) => {
+            this.initCommentList();
+          });
         })
-        .then(() => {
-          this.getCommentList();
-        })
-        .catch((response) => {
-          // 失败
-          if (response === "cancel") {
-            this.$message({
-              type: "info",
-              message: "已取消删除",
-            });
-          }
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
         });
     },
   },
@@ -546,11 +299,11 @@ export default {
   margin-top: 24px;
 }
 .comment-box .feed-author {
-  width: 48px;
+  width: 40px;
   margin-right: 16px;
 }
 .reply-box .comment .feed-author {
-  width: 48px;
+  width: 40px;
 }
 .comment-box .feed-author a {
   display: inline-block;
@@ -814,8 +567,8 @@ export default {
   font-weight: 700;
 }
 .left_essay .part_essay .detail-title-wrap .dc-profile img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   margin-right: 10px;
   border-radius: 50%;
 }
@@ -942,9 +695,9 @@ export default {
   border-bottom: 1px solid rgba(56, 61, 66, 0.1);
 }
 .detail-feedback-wrap .df-ipt-wrap .feeds-author {
-  width: 48px;
-  height: 48px;
-  line-height: 48px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
   margin-right: 16px;
   text-align: center;
   overflow: hidden;
@@ -954,7 +707,7 @@ export default {
 }
 .detail-feedback-wrap .df-ipt-wrap .fadeInput {
   width: 526px;
-  height: 48px;
+  height: 40px;
   padding: 12px 16px;
   box-sizing: border-box;
   background: #f3f5f6;
@@ -973,7 +726,7 @@ export default {
   cursor: pointer;
 }
 .comment-box .feed-author {
-  width: 48px;
+  width: 40px;
   margin-right: 16px;
 }
 .comment-box .feed-author a {
@@ -983,8 +736,8 @@ export default {
 .comment-box .feed-author a img {
   border-radius: 50%;
   opacity: 0.8;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
 }
 .comment-box .feed-author a .com-floor {
   font-size: 12px;
@@ -1061,8 +814,8 @@ export default {
 .release-reply .user-head {
   float: left;
   display: block;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
   margin-right: 24px;
@@ -1070,11 +823,11 @@ export default {
 .release-reply .user-head img {
   display: block;
   height: 100%;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
 }
 .release-reply .replay-con {
-  width: 450px;
+  width: 420px;
 }
 .release-reply .textarea-wrap {
   position: relative;
@@ -1114,8 +867,8 @@ export default {
   padding: 0 16px;
   text-align: center;
   cursor: pointer;
+  border-radius: 4px;
   border: 1px solid #d9dde1;
-  border-radius: 18px;
 }
 .release-reply .reply-ctrl .release-reply-btn {
   display: inline-block;
@@ -1125,9 +878,9 @@ export default {
   text-align: center;
   padding: 0 16px;
   color: #fff;
-  background: #37f;
-  border-radius: 18px;
+  background: #909399;
   cursor: pointer;
+  border-radius: 4px;
   margin-left: 12px;
 }
 .comment-box:last-child {
@@ -1152,7 +905,7 @@ select {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 48px;
+  height: 40px;
   background: #fff;
   box-shadow: 0 0 16px 0 rgba(28, 31, 33, 0.1);
   -webkit-transition: all 0.3s;

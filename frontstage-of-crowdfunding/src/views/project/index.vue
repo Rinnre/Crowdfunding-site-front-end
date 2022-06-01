@@ -12,7 +12,7 @@
             <li>
               <el-dropdown @command="handleType">
                 <span class="el-dropdown-link">
-                  {{ filtration.projectType
+                  {{ filtration.type
                   }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
@@ -25,7 +25,7 @@
             <li>
               <el-dropdown @command="handleStatus">
                 <span class="el-dropdown-link">
-                  {{ filtration.projectStatus
+                  {{ filtration.status
                   }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
@@ -42,7 +42,7 @@
             <li>
               <el-dropdown @command="handleSortWord">
                 <span class="el-dropdown-link">
-                  {{ filtration.projectSort
+                  {{ filtration.sortMethods
                   }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
@@ -69,9 +69,11 @@
         </ul>
         <div class="page">
           <el-pagination
-            background="#f8f8f9"
+            :background="true"
             layout="prev, pager, next"
-            :total="1000"
+            :total="total"
+            @current-change="initProjectList"
+            :page-size="size"
           >
           </el-pagination>
         </div>
@@ -94,10 +96,11 @@ export default {
   data() {
     return {
       filtration: {
-        projectType: "全部",
-        projectStatus: "众筹中",
-        projectSort: "最近上线",
+        type: "全部",
+        status: "众筹中",
+        sortMethods: "最近上线",
       },
+      total: 0,
       projectList: [],
       page: 1,
       size: 8,
@@ -107,23 +110,31 @@ export default {
     this.initProjectList();
   },
   methods: {
-    initProjectList() {
-      projectApi.getSimpleProjectList(this.page, this.size).then((response) => {
+    initProjectList(page) {
+      if (page !=""&&page!=null&&page!=undefined){
+        this.page = page;
+      }
+      console.log(11);
+      projectApi.getSimpleProjectList(this.page, this.size,this.filtration).then((response) => {
         this.projectList = response.data.records;
-        console.log(response.data);
+        this.total = response.data.total;
       });
     },
+    
     handleType(command) {
       let type = command.split(":")[1];
-      this.filtration.projectType = type;
+      this.filtration.type = type;
+      this.initProjectList();
     },
     handleStatus(command) {
       let status = command.split(":")[1];
-      this.filtration.projectStatus = status;
+      this.filtration.status = status;
+      this.initProjectList();
     },
     handleSortWord(command) {
       let sortWord = command.split(":")[1];
-      this.filtration.projectSort = sortWord;
+      this.filtration.sortMethods = sortWord;
+      this.initProjectList();
     },
   },
 };

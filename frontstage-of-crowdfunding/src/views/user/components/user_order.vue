@@ -3,8 +3,8 @@
     <div class="header">
       <h1>
         <p>我的订单</p>
-        <div class="order_search">
-          <el-input placeholder="请输入内容" v-model="keyword">
+        <div v-if="false" class="order_search">
+          <el-input  placeholder="请输入内容" v-model="keyword">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <span class="btn">搜索</span>
@@ -12,18 +12,60 @@
       </h1>
       <div class="nav">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="全部订单" name="first">
+          <el-tab-pane label="全部订单" name="-1">
             <div class="content">
               <ul class="order_list">
-                <li><orderItem></orderItem></li>
+                <li v-for="order in orderList" :key="order.id">
+                  <orderItem :order="order"></orderItem>
+                </li>
               </ul>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="待付款" name="second"></el-tab-pane>
-          <el-tab-pane label="待发货" name="third"></el-tab-pane>
-          <el-tab-pane label="待收货" name="fourth"></el-tab-pane>
-          <el-tab-pane label="已收货" name="five"></el-tab-pane>
-          <el-tab-pane label="已取消" name="six"></el-tab-pane>
+          <el-tab-pane label="待付款" name="1">
+            <div class="content">
+              <ul class="order_list">
+                <li v-for="order in orderList" :key="order.id">
+                  <orderItem :order="order"></orderItem>
+                </li>
+              </ul>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="待发货" name="2">
+            <div class="content">
+              <ul class="order_list">
+                <li v-for="order in orderList" :key="order.id">
+                  <orderItem :order="order"></orderItem>
+                </li>
+              </ul>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="待收货" name="-2">
+            <div class="content">
+              <ul class="order_list">
+                <li v-for="order in orderList" :key="order.id">
+                  <orderItem :order="order"></orderItem>
+                </li>
+              </ul>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="已收货" name="-3">
+            <div class="content">
+              <ul class="order_list">
+                <li v-for="order in orderList" :key="order.id">
+                  <orderItem :order="order"></orderItem>
+                </li>
+              </ul>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="已取消" name="0">
+            <div class="content">
+              <ul class="order_list">
+                <li v-for="order in orderList" :key="order.id">
+                  <orderItem :order="order"></orderItem>
+                </li>
+              </ul>
+            </div>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -32,20 +74,37 @@
 
 <script>
 import orderItem from "@/views/user/components/order_item";
+import user from "@/api/user";
+
 export default {
   name: "UserOrder",
   components: {
-      orderItem:orderItem
+    orderItem: orderItem,
   },
   data() {
     return {
       keyword: "",
-      activeName: "first",
+      activeName: "-1",
+      orderList: [],
     };
+  },
+  created() {
+    this.initOrderList();
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
+      // console.log(tab, event);
+      this.initOrderList();
+    },
+    initOrderList() {
+      this.orderList=[];
+      let state = null;
+      if (this.activeName != -1) {
+        state = this.activeName;
+      }
+      user.getUserOrderInfo(state).then((res) => {
+        this.orderList = res.data;
+      });
     },
   },
 };
@@ -143,14 +202,14 @@ export default {
 }
 
 #main .content ul li {
-    -moz-box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.1);
-    /* height: 236px; */
-    background: #fff;
-    margin-bottom: 30px;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
-    overflow: hidden;
+  -moz-box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.1);
+  /* height: 236px; */
+  background: #fff;
+  margin-bottom: 30px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
 }
 </style>

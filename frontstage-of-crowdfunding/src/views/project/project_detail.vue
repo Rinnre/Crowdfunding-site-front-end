@@ -76,8 +76,8 @@
               </div>
               <!-- 支持人数-->
               <div class="support_people" style="margin-top: 30px">
-                <h3><span>{{project.supporterNumber}}</span>人</h3>
-                <p style="margin-top: 9px">支持人数</p>
+                <h3><span>{{project.supporterNumber}}</span>次</h3>
+                <p style="margin-top: 9px">支持人次</p>
               </div>
             </div>
             <div class="project_button" style="height: 60px">

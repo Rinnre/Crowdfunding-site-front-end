@@ -131,11 +131,26 @@ export default {
             method: 'GET',
         })
     },
+    // 个人中心主页信息查询
+    getUserSimpleProjectInfo(){
+        return request({
+            url: `${api_path}/get/user/simple/project/info`,
+            method: 'GET'
+        })
+    },
     // 用户项目删除
     removeUserProject(projectId) {
         return request({
             url: `${api_path}/remove/project/${projectId}`,
             method: 'DELETE',
+        })
+    },
+    // 查询用户订单信息
+    getUserOrderInfo(orderStatus){
+        return request({
+           url: `${api_path}/get/user/order/info`,
+           method: 'GET',
+           params:{orderStatus}
         })
     }
 }

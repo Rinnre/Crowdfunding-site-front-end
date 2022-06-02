@@ -3,23 +3,27 @@
     <!-- 项目图片 -->
     <div class="order_left">
       <img
-        src="https://p6.moimg.net/path/dst_project/202205/0917/0737/22050907373Kw4V0eZ7namz8MK0bvboRADkG5Y8J.jpg"
+        :src="order.rewardVo.pictureVos[0].picturePath"
       />
     </div>
     <!-- 订单信息 -->
     <div class="order_middle">
       <p class="project_title">
-        <a href="#" target="_blank"
-          >《世上英雄》国产独立叙事游戏：属于每个人的时空胶囊</a
-        >
+        <a :href="'/#/project/detail/' + order.projctId">{{ description }}</a>
       </p>
       <p class="reward">
-        回报档标题：<span>随手支持</span>
+        回报档标题：<span>{{ order.rewardVo.title }}</span>
         <!-- 订单详情 -->
-        <a class="order_detail" @click="dialogTableVisible = true">订单详情</a>
+        <a
+          class="order_detail"
+          v-if="order.orderStatus != 0"
+          @click="dialogTableVisible = true"
+          >订单详情</a
+        >
         <el-dialog
           width="550px"
           title="订单详情"
+          v-if="order.orderStatus != 0"
           :visible.sync="dialogTableVisible"
         >
           <el-divider></el-divider>
@@ -27,8 +31,14 @@
           <div class="address">
             <h4>收货信息</h4>
             <div class="content">
-              <p><span>收件人</span><span> 15570756116</span></p>
-              <p><span>收货地址</span><span>1595519431@qq.com</span></p>
+              <p>
+                <span>收件人</span
+                ><span> {{ order.address.consigneePhone }}</span>
+              </p>
+              <p>
+                <span>收货地址</span
+                ><span>{{ order.address.consigneeAddress }}</span>
+              </p>
             </div>
           </div>
           <el-divider></el-divider>
@@ -36,31 +46,32 @@
             <h4>回报档信息</h4>
             <div class="content">
               <p>
-                <span>项目名称</span
-                ><span>
-                  《世上英雄》国产独立叙事游戏：属于每个人的时空胶囊</span
-                >
+                <span>项目名称</span><span> {{ order.projectName }}</span>
               </p>
               <p class="reward_style">
                 <span>回报档</span>
                 <span class="reward_detail">
                   <span>
-                    ¥3（随手支持）
+                    ¥{{ order.rewardVo.supportMoney }}（{{
+                      order.rewardVo.title
+                    }}）
                     <span class="pick number">
-                      <i>1 份</i>
+                      <i>{{ order.rewardCount }} 份</i>
                     </span>
                   </span>
                 </span>
               </p>
               <p>
                 <span>承诺回报时间</span
-                ><span style="text-align: right">2022年08月内</span>
+                ><span style="text-align: right"
+                  >众筹成功后{{ order.rewardVo.shipmentsDay }}个月内</span
+                >
               </p>
               <p>
                 <span>实付金额</span
                 ><span
                   style="text-align: right; font-size: 20px; font-weight: 700"
-                  >￥3</span
+                  >￥{{ order.orderAmount }}</span
                 >
               </p>
             </div>
@@ -69,22 +80,36 @@
           <div class="address">
             <h4>订单信息</h4>
             <div class="content">
-              <p><span>订单号</span><span>1012205162346160160074</span></p>
-              <p><span>下单时间</span><span>2022-05-16 23:46:16</span></p>
-              <p><span>付款时间</span><span>2022-05-16 23:46:42</span></p>
+              <p>
+                <span>订单号</span><span>{{ order.id }}</span>
+              </p>
+              <p>
+                <span>支付流水号</span><span>{{ order.payNum }}</span>
+              </p>
+              <p>
+                <span>下单时间</span><span>{{ order.createTime }}</span>
+              </p>
+              <p>
+                <span>付款时间</span><span>{{ order.payTime }}</span>
+              </p>
             </div>
           </div>
         </el-dialog>
       </p>
-      <p class="reward_count">回报档：<span>￥3</span><span> * 1份</span></p>
-      <p class="order_amount">实际支付的金额：<span>￥3</span></p>
+      <p class="reward_count">
+        回报档：<span>￥{{ order.rewardVo.supportMoney }}</span
+        ><span> * {{ order.rewardCount }}份</span>
+      </p>
+      <p class="order_amount">
+        实际支付的金额：<span>￥{{ order.orderAmount }}</span>
+      </p>
     </div>
     <!-- 订单状态 -->
     <div class="order_right">
       <div class="inner_text">
-        <p>支付成功</p>
+        <p>{{ orderStatus }}</p>
       </div>
-      <div class="operation_btn">
+      <div class="operation_btn" v-if="false">
         <el-button size="mini" round>改手机号</el-button>
         <el-button size="mini" type="danger" round>取消订单</el-button>
       </div>
@@ -95,10 +120,33 @@
 <script>
 export default {
   name: "OrderItem",
+  props: {
+    order: {
+      type: Object,
+      default: {},
+    },
+  },
   data() {
     return {
       dialogTableVisible: false,
+      description: "",
+      orderStatus: "",
     };
+  },
+  created() {
+    this.description = this.order.rewardVo.description;
+    if (this.description.length > 42) {
+      this.description = this.description.substring(0, 42);
+      this.description = this.description + "...";
+    }
+    if (this.order.orderStatus == 0) {
+      this.orderStatus = "订单取消";
+    } else if (this.order.orderStatus == 1) {
+      this.orderStatus = "等待支付";
+    } else if (this.order.orderStatus == 2) {
+      this.orderStatus = "已支付";
+    }
+    console.log(this.order);
   },
 };
 </script>
@@ -238,15 +286,14 @@ export default {
 }
 
 .reward .content .reward_style .reward_detail .number {
-    border: none;
-    width: 60px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    float: right;
-    font-size: 12px;
+  border: none;
+  width: 60px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  float: right;
+  font-size: 12px;
 }
-
 
 .reward .content .reward_style .reward_detail .number i {
   display: inline-block;

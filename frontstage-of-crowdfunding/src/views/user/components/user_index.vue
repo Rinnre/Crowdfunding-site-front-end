@@ -25,7 +25,7 @@
         <p>
           <span class="go_span" data-href="/u/fans_user">0<em> 粉丝</em></span>
           <span class="go_span" data-href="/u/favor_user">0<em> 关注</em></span>
-          <span id="ALL"> <span>8</span><em> 被赞</em></span>
+          <span id="ALL"> <span>0</span><em> 被赞</em></span>
         </p>
       </div>
       <div class="edit-btn">
@@ -36,27 +36,25 @@
       </div>
     </div>
     <!-- 认证警告 -->
-    <div class="jzb_make_up" v-if="userInfo.authStatus==0" >
+    <div class="jzb_make_up" v-if="userInfo.authStatus == 0">
       <i class="iconfont icon-warning"></i>
       因国家监管要求，您的收款账户须升级认证，否则可能无法使用提现等功能
-      <a id="jzb_make_up_a" href="#/user/auth" 
-        >立即升级认证</a
-      >
+      <a id="jzb_make_up_a" href="#/user/auth">立即升级认证</a>
     </div>
     <!-- 众筹信息 -->
     <div class="mask" style="display: black">
       <div class="item">
-        <p>0.00 元</p>
+        <p>{{projectInfo.totalMoney}} 元</p>
         <p>筹款总额</p>
         <p><i class="iconfont icon-funds"></i></p>
       </div>
       <div class="item">
-        <p>0 人</p>
-        <p>参与总人数</p>
+        <p>{{projectInfo.totalSupporter}} 人</p>
+        <p>参与总人次</p>
         <p><i class="iconfont icon-fans"></i></p>
       </div>
       <div class="item">
-        <p>0 个</p>
+        <p>{{projectInfo.totalNumber}} 个</p>
         <p>项目数</p>
         <p><i class="iconfont icon-fundraising"></i></p>
       </div>
@@ -65,12 +63,15 @@
     <div class="column">
       <p>个人简介</p>
     </div>
-    <p class="introduction">这个人很懒,什么都没有留下...</p>
+    <p class="introduction" v-if="userInfo.biography==''||userInfo.biography==undefined">这个人很懒,什么都没有留下...</p>
+    <p class="introduction" v-else>{{userInfo.biography}}</p>
     <!--动态-->
     <div class="column info">
       <p>我的动态</p>
       <p>
-        <router-link to="/user/dynamic"><i class="iconfont icon-edit"></i>发布动态</router-link>
+        <router-link to="/user/dynamic"
+          ><i class="iconfont icon-edit"></i>发布动态</router-link
+        >
       </p>
     </div>
     <div class="tab_cont">
@@ -89,7 +90,6 @@
 </template>
 
 <script>
-import store from "@/store";
 import dynamic from "@/components/dynamic/index";
 import user from "@/api/user";
 
@@ -101,14 +101,29 @@ export default {
   data() {
     return {
       userInfo: "",
+      projectInfo:{
+        totalMoney:0,
+        totalNumber:0,
+        totalSupporter:0
+      },
       dynamicList: [],
     };
   },
   created() {
-    this.userInfo = store.state.user;
+    this.loadUserProjectSimpleInfo();
     this.loadDynamicList();
   },
   methods: {
+    // 加载用户项目数据和个人简介
+    loadUserProjectSimpleInfo() {
+      user.getUserSimpleProjectInfo().then((response) => {
+        this.userInfo = response.data.userInfo;
+        this.projectInfo.totalMoney  =response.data.TOTAL_PROJECT_MONEY;
+        this.projectInfo.totalNumber  =response.data.TOTAL_PROJECT_NUMBER;
+        this.projectInfo.totalSupporter  =response.data.TOTAL_PROJECT_SUPPORTER;
+          console.log(response.data);
+      });
+    },
     // 加载动态数据
     loadDynamicList() {
       user.getDynamicList().then((res) => {

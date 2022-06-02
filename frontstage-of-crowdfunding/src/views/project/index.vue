@@ -52,8 +52,8 @@
                   <el-dropdown-item command="money:金额最高"
                     >金额最高</el-dropdown-item
                   >
-                  <el-dropdown-item command="person:支持最多"
-                    >支持最多</el-dropdown-item
+                  <el-dropdown-item command="person:评论最多"
+                    >评论最多</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>

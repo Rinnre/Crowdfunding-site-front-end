@@ -22,10 +22,10 @@
               placement="bottom"
               popper-class="dynamic-popover-more"
               trigger="click"
-              v-if="userinfo != undefined && userInfo.uid == dynamic.uid"
+              v-if="userInfo != undefined && userInfo.uid == dynamic.uid"
             >
               <div class="dynamic-operation">
-                <div class="dynamic-operation-top">
+                <div class="dynamic-operation-top" v-if="false">
                   <a href="javascript:;">置顶</a>
                 </div>
                 <div class="dynamic-operation-delete">
@@ -86,7 +86,6 @@
 </template>
 
 <script>
-import store from "@/store";
 import comment from "@/components/comment";
 export default {
   name: "Dynamic",
@@ -102,13 +101,14 @@ export default {
   data() {
     return {
       userInfo: {},
+
       commentDisplay: false,
     };
   },
   created() {
-    this.userInfo = store.state.user;
+    this.userInfo = this.$store.state.user;
     // console.log(this.userInfo)
-    // console.log(this.dynamic)
+    console.log(this.dynamic)
   },
   methods: {
     deleteDynamic() {

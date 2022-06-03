@@ -60,14 +60,14 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="4">
+          <!-- <el-submenu index="4">
             <template slot="title">
               <span>我的关注</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="/user/pro_optimistic">看好的项目</el-menu-item>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu> -->
 
           <el-submenu index="5">
             <template slot="title">

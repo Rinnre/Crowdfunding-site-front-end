@@ -169,10 +169,15 @@
 
 <script>
 import comment from "@/api/comment";
+import dynamic from "@/api/dynamic";
 export default {
   //
   props: {
     sourceId: {
+      type: String,
+      default: "",
+    },
+    type: {
       type: String,
       default: "",
     },
@@ -206,10 +211,16 @@ export default {
   methods: {
     // 获取评论列表
     initCommentList() {
-      comment.getCommentsByProjectId(this.sourceId).then((response) => {
-        console.log(response);
-        this.commentList = response.data.commentList;
-      });
+      if (this.type == "") {
+        comment.getCommentsByProjectId(this.sourceId).then((response) => {
+          this.commentList = response.data.commentList;
+        });
+      }
+      if (this.type == "dynamic") {
+        dynamic.getCommentsByDynamicId(this.sourceId).then((response) => {
+          this.commentList = response.data.commentList;
+        });
+      }
     },
     // 发布评论
 
@@ -224,18 +235,35 @@ export default {
           ? this.commentForm.replyContent
           : this.commentForm.content;
 
-      comment.addCommentToProject(this.commentForm).then((response) => {
-        if (response.success === true) {
-          this.$message.success(response.message);
-          this.initCommentList();
-          this.commentForm = {};
-          this.commentForm.content = "";
-          this.commentForm.memberId = this.$store.state.user.uid;
-          this.commentForm.nickname = this.$store.state.user.nickName;
-          this.commentForm.avatar = this.$store.state.user.avatar;
-          this.commentId="";
-        }
-      });
+      if (this.type == "dynamic") {
+        dynamic.addCommentToDynamic(this.commentForm).then((response) => {
+          if (response.success === true) {
+            this.$message.success(response.message);
+            this.initCommentList();
+            this.commentForm = {};
+            this.commentForm.content = "";
+            this.commentForm.memberId = this.$store.state.user.uid;
+            this.commentForm.nickname = this.$store.state.user.nickName;
+            this.commentForm.avatar = this.$store.state.user.avatar;
+            this.commentId = "";
+          }
+        });
+      }
+
+      if (this.type == "") {
+        comment.addCommentToProject(this.commentForm).then((response) => {
+          if (response.success === true) {
+            this.$message.success(response.message);
+            this.initCommentList();
+            this.commentForm = {};
+            this.commentForm.content = "";
+            this.commentForm.memberId = this.$store.state.user.uid;
+            this.commentForm.nickname = this.$store.state.user.nickName;
+            this.commentForm.avatar = this.$store.state.user.avatar;
+            this.commentId = "";
+          }
+        });
+      }
     },
     addReply(commentId, replyId) {
       this.commentId = commentId;

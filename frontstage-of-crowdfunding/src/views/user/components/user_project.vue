@@ -6,7 +6,11 @@
       </p>
     </div>
     <div class="project_field">
-      <div class="no_pro" style="margin-left: 305px;" v-if="projectList.length <= 0">
+      <div
+        class="no_pro"
+        style="margin-left: 305px"
+        v-if="projectList.length <= 0"
+      >
         <img
           src="https://s.moimg.net/activity/images/empty_project.png"
           alt=""
@@ -20,24 +24,56 @@
           <li>
             <div>
               <div class="pro_detail">
-                <a href="#" target="_blank">
+                <a :href="'/#/project/detail/' + project.id">
                   <img :src="project.headPicture" alt="" />
                 </a>
                 <div>
-                  <a href="#" target="_blank">
+                  <a :href="'/#/project/detail/' + project.id">
                     <p class="pro_name">{{ project.title }}</p>
                   </a>
                 </div>
               </div>
               <div class="pro_status_wrap">
-                <span class="pro_status">{{project.projectStatus}}</span>
+                <span class="pro_status">{{ project.projectStatus }}</span>
                 <span class="pro_status_line"></span>
                 <span class="pro_type">类型：{{ project.type }}</span>
-                <div class="opt">
+                <!-- <div class="opt" >
                   <span>编辑</span>
                   <span @click="confirmDeleta(project.id)">删除</span>
+                </div> -->
+                <div class="opt" v-if="project.projectStatus == '待上线'">
+                  <span
+                    @click="
+                      dialogVisible = true;
+                      timeList = [];
+                    "
+                    >设置时间</span
+                  >
                 </div>
               </div>
+              <el-dialog
+                title="设置结束时间"
+                :visible.sync="dialogVisible"
+                width="300px"
+              >
+                <span
+                  >设置项目结束时间后，项目众筹则开始，且不可修改，请谨慎设置！</span
+                >
+                <div class="block">
+                  <el-date-picker
+                    v-model="endTime"
+                    type="date"
+                    placeholder="选择日期时间"
+                  >
+                  </el-date-picker>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="dialogVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="setStartTime(project.id)"
+                    >确 定</el-button
+                  >
+                </span>
+              </el-dialog>
             </div>
           </li>
         </ul>
@@ -48,11 +84,15 @@
 
 <script>
 import user from "@/api/user";
+import project from "@/api/project";
+
 export default {
   name: "",
   data() {
     return {
       projectList: [],
+      endTime: "",
+      dialogVisible: false,
     };
   },
   created() {
@@ -66,33 +106,46 @@ export default {
           if (item.status == 0) {
             item.projectStatus = "审核中";
           } else if (item.status == 1) {
-            item.projectStatus = "待上线";
-          } else if (item.status == 2) {
             item.projectStatus = "众筹中";
-          } else if (item == 3) {
-            item.projectStatus = "众筹成功！";
-          } else if (item == -1) {
+          } else if (item.status == 2) {
+            item.projectStatus = "众筹结束";
+          } else if (item.status == 3) {
+            item.projectStatus = "准备中";
+          } else if (item.status == -1) {
             item.projectStatus = "众筹失败";
-          }else{
-            item.projectStatus='准备中'
+          } else {
+            item.projectStatus = "待上线";
           }
         });
         // console.log(res.data)
       });
     },
-    confirmDeleta(id){
+    confirmDeleta(id) {
       this.$confirm("此操作将永久删除该项目, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() =>{
-        user.removeUserProject(id)
-          .then((res) =>{
-            this.$message.success(res.message);
-            this.initProjectList();
-          })
-      })
-    }
+      }).then(() => {
+        user.removeUserProject(id).then((res) => {
+          this.$message.success(res.message);
+          this.initProjectList();
+        });
+      });
+    },
+    setStartTime(projectId) {
+      // console.log(projectId);
+      let nowTime = new Date().getTime();
+      let endTime = this.endTime.getTime();
+      if(endTime-nowTime<1296000000){
+        this.$message.error("众筹时间最短为15天");
+        return;
+      }
+      project.setProjectEndTime(projectId,null, this.endTime).then((res) => {
+        this.$message.success(res.message);
+        this.dialogVisible = false;
+        this.initProjectList();
+      });
+    },
   },
 };
 </script>

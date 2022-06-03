@@ -44,12 +44,12 @@ const routes = [
         // 设置路由的名称，命名路由。
         name: 'user_addresss',
         component: () => import('@/views/user/components/user_address'),
-      },{
+      }, {
         path: '/user/order',
         // 设置路由的名称，命名路由。
         name: 'user_order',
         component: () => import('@/views/user/components/user_order'),
-      },{
+      }, {
         path: '/user/pro_optimistic',
         // 设置路由的名称，命名路由。
         name: 'user_pro_optimistic',
@@ -60,7 +60,7 @@ const routes = [
         // 设置路由的名称，命名路由。
         name: 'user_address',
         component: () => import('@/views/user/components/user_address'),
-      },{
+      }, {
         path: '/user/auth',
         // 设置路由的名称，命名路由。
         name: 'user_auth',
@@ -112,9 +112,15 @@ const routes = [
     // 设置路由的名称，命名路由。
     name: 'paySuccess',
     component: () => import('@/views/result/success')
+  }, {
+
+    path: '/dynamic',
+    // 设置路由的名称，命名路由。
+    name: 'dynamic',
+    component: () => import('@/views/dynamic')
   },
 
-  
+
 ]
 
 const router = new VueRouter({

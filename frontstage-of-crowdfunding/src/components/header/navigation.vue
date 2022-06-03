@@ -14,7 +14,7 @@
             <router-link to="/project/list">发现项目</router-link>
           </li>
           <li class="ga_dongtai">
-            <a target="_blank" href="#">创作者动态</a>
+            <a  href="/#/dynamic">创作者动态</a>
           </li>
         </ul>
         <div class="user-center right">

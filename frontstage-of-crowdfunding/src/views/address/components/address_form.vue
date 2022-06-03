@@ -14,7 +14,6 @@
       <el-form-item label="收货人手机号" prop="consigneePhone">
         <el-input
           v-model="shoppingAddress.consigneePhone"
-          auto-complete="off"
         ></el-input>
       </el-form-item>
 
@@ -64,8 +63,10 @@ export default {
   },
   watch: {
     address(val) {
-      this.shoppingAddress = this.address;
-      this.resetForm("shoppingAddress");
+      if(this.address!=null){
+
+        this.shoppingAddress = this.address;
+      }
     },
   },
   data() {

@@ -109,6 +109,9 @@
       <div class="inner_text">
         <p>{{ orderStatus }}</p>
       </div>
+      <div class="" style="margin-left:50px" v-if="order.orderStatus==1">
+        <el-button size="mini" round @click="toPay()">去支付</el-button>
+      </div>
       <div class="operation_btn" v-if="false">
         <el-button size="mini" round>改手机号</el-button>
         <el-button size="mini" type="danger" round>取消订单</el-button>
@@ -118,6 +121,7 @@
 </template>
 
 <script>
+import pay from "@/api/pay";
 export default {
   name: "OrderItem",
   props: {
@@ -147,6 +151,22 @@ export default {
       this.orderStatus = "已支付";
     }
     console.log(this.order);
+  },
+  methods: {
+    toPay() {
+      pay.sendRequestToAliPay(this.order.id).then((res) => {
+        // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
+        const divForm = document.getElementsByTagName("div");
+        if (divForm.length) {
+          document.body.removeChild(divForm[0]);
+        }
+        const div = document.createElement("div");
+        div.innerHTML = res.data; // data就是接口返回的form 表单字符串
+        document.body.appendChild(div);
+        document.forms[0].setAttribute("target", "_self"); // 新开窗口跳转
+        document.forms[0].submit();
+      });
+    },
   },
 };
 </script>

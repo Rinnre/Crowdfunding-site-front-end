@@ -1,10 +1,10 @@
 <template>
   <el-card class="box-card">
     <div class="dynamic-head">
-      <el-avatar :size="50" :src="userInfo.avatar"></el-avatar>
+      <el-avatar :size="50" :src="dynamic.user.avatar"></el-avatar>
       <div style="margin-left: 61px; margin-top: -49px">
         <div style="font-size: 16px; font-weight: normal; color: #7a8087">
-          {{ userInfo.nickName }}
+          {{ dynamic.user.nickName }}
         </div>
         <div
           class="date"
@@ -22,6 +22,7 @@
               placement="bottom"
               popper-class="dynamic-popover-more"
               trigger="click"
+              v-if="userinfo != undefined && userInfo.uid == dynamic.uid"
             >
               <div class="dynamic-operation">
                 <div class="dynamic-operation-top">
@@ -69,7 +70,7 @@
         <i class="iconfont icon-share"></i>
         转发
       </div>
-      <div class="action thumbs">
+      <div class="action thumbs" @click="commentDisplay = !commentDisplay">
         <i class="iconfont icon-comment"></i>
         评论
       </div>
@@ -78,11 +79,15 @@
         点赞
       </div>
     </div>
+    <div class="comment_style" v-if="commentDisplay">
+      <comment :sourceId="this.dynamic.id" :type="'dynamic'"></comment>
+    </div>
   </el-card>
 </template>
 
 <script>
 import store from "@/store";
+import comment from "@/components/comment";
 export default {
   name: "Dynamic",
   props: {
@@ -91,14 +96,19 @@ export default {
       default: {},
     },
   },
+  components: {
+    comment: comment,
+  },
   data() {
     return {
       userInfo: {},
+      commentDisplay: false,
     };
   },
   created() {
     this.userInfo = store.state.user;
     // console.log(this.userInfo)
+    // console.log(this.dynamic)
   },
   methods: {
     deleteDynamic() {
@@ -233,5 +243,17 @@ export default {
 }
 .dynamic-operation a:hover {
   color: blue;
+}
+
+.comment_style /deep/ .detail-feedback-wrap {
+  background: #f7f7f7 !important;
+  border-radius: 0px;
+  margin: 0;
+  padding-bottom: 0px;
+  box-shadow: none;
+}
+
+.comment_style /deep/ .comment-box {
+  background: #f7f7f7;
 }
 </style>

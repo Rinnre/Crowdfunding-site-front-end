@@ -64,5 +64,12 @@ export default {
             url: `${api_path}/get/project/detail/${project_id}`,
             method:'GET',
         })
-    }
+    },
+    //设置项目结束时间
+    setProjectEndTime(projectId,startTime,endTime){
+        return request({
+            url: `${api_path}/set/project/start/time/${projectId}/${startTime}/${endTime}`,
+            method:"POST",
+        })
+    } 
 }

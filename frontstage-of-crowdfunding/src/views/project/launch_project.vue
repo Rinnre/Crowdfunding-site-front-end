@@ -658,15 +658,18 @@ export default {
     // 初始化项目信息
     initProjectInfo() {
       project.getProjectInfo(this.projectsName).then((res) => {
-        this.projectInfo = res.data;
-        if (
-          this.projectInfo.projectSupportingList != null &&
-          this.projectInfo.projectSupportingList.length != 0
-        ) {
-          this.projectInfo.projectSupportingList.forEach((item) => {
-            let index = 1;
-            this.supportingList.push({ name: 1, url: item.picturePath });
-          });
+        if(res.data!=null){
+
+          this.projectInfo = res.data;
+          if (
+            this.projectInfo.projectSupportingList != null &&
+            this.projectInfo.projectSupportingList.length != 0
+          ) {
+            this.projectInfo.projectSupportingList.forEach((item) => {
+              let index = 1;
+              this.supportingList.push({ name: 1, url: item.picturePath });
+            });
+          }
         }
       });
     },

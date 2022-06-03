@@ -5,7 +5,7 @@
       <div class="head_box clearfix">
         <div class="head_left">
           <h3 class="title">
-            <span>{{project.title}}</span>
+            <span>{{ project.title }}</span>
           </h3>
           <div class="head_picture">
             <img
@@ -20,7 +20,9 @@
         <div class="head_right">
           <div class="sponsor">
             <div class="sponsor_info">
-              <span class="sponsor_name clearfix">{{project.sponsor.nickName}}</span>
+              <span class="sponsor_name clearfix">{{
+                project.sponsor.nickName
+              }}</span>
               <p
                 style="
                   margin-top: 7px;
@@ -29,65 +31,93 @@
                   line-height: 14px;
                   color: #7a8087;
                 "
-              >
-                
-              </p>
+              ></p>
               <div class="authen">
                 <div class="realname person"></div>
               </div>
               <p class="project_tag clearfix">
                 <i class="iconfont icon-tag"></i>
-                项目类别：{{project.type}}
+                项目类别：{{ project.type }}
               </p>
             </div>
 
-            <a
-              href=""
-              target="_blank"
-              class="avater"
+            <a href="" target="_blank" class="avater"
               ><img
                 onerror="javascript:this.src='https://s.moimg.net/img/web4-0/default_profile@3x.png'"
-                :src="project.sponsor.avatar" /><span
-                class="blue-v"
-              ></span
+                :src="project.sponsor.avatar" /><span class="blue-v"></span
             ></a>
           </div>
           <div class="right_body">
             <div class="project_info">
               <!-- 众筹目标 -->
               <div class="project_goal">
-                <h3>已筹¥<span>{{project.supportMoney}}</span></h3>
+                <h3>
+                  已筹¥<span>{{ project.supportMoney }}</span>
+                </h3>
                 <p class="progress">
                   <el-progress
                     :text-inside="true"
                     :stroke-width="22"
-                    :percentage="project.supportMoney/project.targetMoney*100"
+                    :percentage="
+                      (project.supportMoney / project.targetMoney) * 100
+                    "
                     status="exception"
                   ></el-progress>
                 </p>
                 <p style="line-height: 16px; margin-top: 18px">
-                  <span class="goal-money">目标金额 ¥{{project.targetMoney}}</span>
+                  <span class="goal-money"
+                    >目标金额 ¥{{ project.targetMoney }}</span
+                  >
                 </p>
               </div>
               <!-- 剩余时间 -->
-              <div class="remain-time" style="margin-top: 30px">
-                <h3>5天00:14:40</h3>
-                <p style="margin-top: 9px">剩余时间</p>
+              <div
+                class="remain-time"
+                style="margin-top: 30px"
+                v-if="project.status == 1"
+              >
+                <h3>{{ project.endTime }}</h3>
+                <p style="margin-top: 9px">截止时间</p>
+              </div>
+              <div
+                class="remain-time"
+                style="margin-top: 30px"
+                v-if="project.status == 0"
+              >
+                <h3>准备中</h3>
+              </div>
+              <div
+                class="remain-time"
+                style="margin-top: 30px"
+                v-if="project.status == 2"
+              >
+                <h3>众筹结束</h3>
               </div>
               <!-- 支持人数-->
-              <div class="support_people" style="margin-top: 30px">
-                <h3><span>{{project.supporterNumber}}</span>次</h3>
+              <div class="support_people" style="margin-top: 30px" v-if="project.status == 1||project.status == 2">
+                <h3>
+                  <span>{{ project.supporterNumber }}</span
+                  >次
+                </h3>
                 <p style="margin-top: 9px">支持人次</p>
               </div>
             </div>
-            <div class="project_button" style="height: 60px">
+            <div
+              class="project_button"
+              style="height: 60px"
+              v-if="project.status == 1"
+            >
               <a
                 @click="dialogTableVisible = true"
                 class="support-btn btn support-btn-go"
                 ><i class="iconfont icon-money"></i> 立即购买支持</a
               >
               <el-dialog :visible.sync="dialogTableVisible">
-                <li v-for="rewardItem in project.rewardVos" :key="rewardItem.id" style="margin-bottom: 30px">
+                <li
+                  v-for="rewardItem in project.rewardVos"
+                  :key="rewardItem.id"
+                  style="margin-bottom: 30px"
+                >
                   <reward :rewardItem="rewardItem"></reward>
                 </li>
               </el-dialog>
@@ -95,6 +125,7 @@
                 href="javascript:;"
                 class="atten NshowMaskAtten"
                 style="color: rgb(122, 128, 135)"
+                v-if="false"
                 ><i class="iconfont icon-optimistic"></i> <span>看好</span></a
               >
             </div>
@@ -107,7 +138,10 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="项目详情" name="first">
             <div id="cont_match_htmlstr" class="content-wrap html-from-editor">
-              <p v-for="projectDetail in project.projectDetailVos" :key="projectDetail.id">
+              <p
+                v-for="projectDetail in project.projectDetailVos"
+                :key="projectDetail.id"
+              >
                 <img
                   class="editor"
                   :src="projectDetail.picturePath"
@@ -115,7 +149,6 @@
                   height="1886"
                 />
               </p>
-              
             </div>
           </el-tab-pane>
           <el-tab-pane label="项目评论" name="second">
@@ -155,8 +188,12 @@
             >
           </el-collapse>
         </div>
-        <div class="reward_list">
-          <li v-for="rewardItem in project.rewardVos" :key="rewardItem.id" style="margin-bottom: 30px">
+        <div class="reward_list" v-if="project.status == 1">
+          <li
+            v-for="rewardItem in project.rewardVos"
+            :key="rewardItem.id"
+            style="margin-bottom: 30px"
+          >
             <reward :rewardItem="rewardItem"></reward>
           </li>
         </div>
@@ -168,37 +205,39 @@
 <script>
 import navigation from "@/components/header/navigation";
 import reward from "@/views/project/components/reward";
-import comment from "@/components/comment"
-import project from "@/api/project"
+import comment from "@/components/comment";
+import project from "@/api/project";
 export default {
   name: "projectDetail",
   components: {
     navigation: navigation,
     reward: reward,
-    comment:comment
+    comment: comment,
   },
   data() {
     return {
       activeName: "first",
       activeNames: ["1"],
       dialogTableVisible: false,
-      projectId:"",
-      project:{}
+      projectId: "",
+      project: {},
     };
   },
   created() {
-    this.projectId = this.$route.params.id
+    this.projectId = this.$route.params.id;
     this.initProject();
+  },
+  computed: {
   },
   methods: {
     handleChange() {},
-    initProject(){
-      project.getProjectDetail(this.projectId)
-          .then(response =>{
-            this.project = response.data;
-            console.log(response.data)
-          })
-    }
+    initProject() {
+      project.getProjectDetail(this.projectId).then((response) => {
+        this.project = response.data;
+        this.project.endTime = this.project.endTime.replace('T'," ");
+        console.log(response.data);
+      });
+    },
   },
 };
 </script>
@@ -364,7 +403,7 @@ export default {
 .head_right .project_info h3 {
   height: 34px;
   line-height: 34px;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 700;
 }
 

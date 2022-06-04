@@ -1,39 +1,22 @@
 import router from './router'
-import store from './store'
 import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth' // 验权
+import store from '@/store'
 
-const whiteList = ['/login'] // 不重定向白名单
-router.beforeEach((to, from, next) => {
-  NProgress.start()
-  if (getToken()) {
-    if (to.path === '/login') {
-      next({ path: '/' })
-      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
-    } else {
-      if (store.getters.roles.length === 0) {
-        store.dispatch('GetInfo').then(res => { // 拉取用户信息
-          next()
-        }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
-      } else {
-        next()
-      }
+router.beforeEach(async (to, from, next) => {
+  const user = store.state.user;
+  if (user) {
+    if (to.path.indexOf('/launch/') > -1 && user.authStatus != 1) {
+      Message.error('请先进行用户认证')
+      next('')
     }
+    next()
   } else {
-    if (whiteList.indexOf(to.path) !== -1) {
-      next()
+    if (to.path.indexOf('/user/') > -1 || to.path.indexOf('/launch/') > -1 || to.path.indexOf('/order/') > -1) {
+      Message.error('请先登录')
+      next('')
+
     } else {
-      next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
-      NProgress.done()
+      next()
     }
   }
-})
-
-router.afterEach(() => {
-  NProgress.done() // 结束Progress
 })

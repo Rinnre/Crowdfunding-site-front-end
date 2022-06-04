@@ -172,15 +172,17 @@
     </div>
     <div v-if="active == 2">
       <div class="su">
-          <el-result
-            icon="success"
-            title="支付成功！"
-            subTitle="感谢您对本项目的大力支持"
-          >
-            <template slot="extra">
-              <el-button type="primary" size="medium" @click="backHome()">返回项目详情</el-button>
-            </template>
-          </el-result>
+        <el-result
+          icon="success"
+          title="支付成功！"
+          subTitle="感谢您对本项目的大力支持"
+        >
+          <template slot="extra">
+            <el-button type="primary" size="medium" @click="backHome()"
+              >返回项目详情</el-button
+            >
+          </template>
+        </el-result>
       </div>
     </div>
   </div>
@@ -208,10 +210,12 @@ export default {
       active: 0,
       orderInfo: {},
       order: {
-        projectId:"",
+        projectId: "",
         orderAmount: "",
         rewardCount: 1,
-        address: {},
+        address: {
+          consigneeName: "123",
+        },
         rewardVo: {},
       },
       amount: "",
@@ -273,11 +277,13 @@ export default {
     paySuccess() {
       this.$message.success("支付成功！");
       location.reload();
-      this.active=2;
+      this.active = 2;
     },
-    backHome(){
-      this.$router.replace("/#/project/detail/"+ this.orderInfo.reward.projectId);
-    }
+    backHome() {
+      this.$router.replace(
+        "/#/project/detail/" + this.orderInfo.reward.projectId
+      );
+    },
   },
 };
 </script>

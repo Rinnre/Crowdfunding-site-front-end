@@ -19,6 +19,9 @@ const user = {
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
+    SET_BUTTONS: (state, buttons) => {
+      state.buttons = buttons
+    },
     SET_ROLES: (state, roles) => {
       state.roles = roles
     }
@@ -56,14 +59,22 @@ const user = {
       commit('SET_AVATAR', data.avatar)
       // return new Promise((resolve, reject) => {
       //   getInfo(state.token).then(response => {
-      //     const data = response.data
-      //     if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-      //       commit('SET_ROLES', data.roles)
-      //     } else {
-      //       reject('getInfo: roles must be a non-null array !')
-      //     }
-      //     commit('SET_NAME', data.name)
-      //     commit('SET_AVATAR', data.avatar)
+      //     // const data = response.data
+      //     // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+      //     //   commit('SET_ROLES', data.roles)
+      //     // } else {
+      //     //   reject('getInfo: roles must be a non-null array !')
+      //     // }
+          
+          
+      //     // const buttonAuthList = []
+      //     // data.permissionValueList.forEach(button => {
+      //     //   buttonAuthList.push(button)
+      //     // })
+
+      //     commit('SET_NAME', data.admin.nickName)
+      //     // commit('SET_AVATAR', data.admin.avatar)
+      //     // commit('SET_BUTTONS', buttonAuthList)
       //     resolve(response)
       //   }).catch(error => {
       //     reject(error)
@@ -80,6 +91,7 @@ const user = {
       //   logout(state.token).then(() => {
       //     commit('SET_TOKEN', '')
       //     commit('SET_ROLES', [])
+      //     commit('SET_BUTTONS', [])
       //     removeToken()
       //     resolve()
       //   }).catch(error => {

@@ -82,7 +82,7 @@
               <div
                 class="remain-time"
                 style="margin-top: 30px"
-                v-if="project.status == 0"
+                v-if="project.status == 0||project.status==3"
               >
                 <h3>准备中</h3>
               </div>
